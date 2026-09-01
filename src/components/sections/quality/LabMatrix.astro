@@ -1,0 +1,63 @@
+---
+import type { Dict, Locale } from '../../../i18n/types';
+import Reveal from '../../ui/Reveal.astro';
+import SectionHeading from '../../ui/SectionHeading.astro';
+
+// quality S3: four grouped blocks separated by whitespace, never by full width rules.
+// instrument acronyms render in the mono stack, the rest of the line stays in sans.
+export interface Props {
+  t: Dict;
+  locale: Locale;
+}
+
+const { t, locale } = Astro.props;
+const s = t.quality.labMatrix;
+
+// leading all caps token (ICP-OES, FT-IR, SEM-EDX, PCT ...) is the instrument name.
+// entries without one, e.g. a reliability test written in prose, stay fully in sans.
+const CODE = /^([A-Z0-9][A-Z0-9-]*[A-Z0-9])[\s]*(.*)$/;
+
+function splitEntry(entry: string): { code: string; rest: string } {
+  const match = CODE.exec(entry);
+  if (!match) return { code: '', rest: entry };
+  return { code: match[1], rest: match[2] ?? '' };
+}
+---
+
+<section
+  class="border-y border-line bg-bg-raised"
+  data-section="quality/LabMatrix"
+  data-locale={locale}
+>
+  <div class="shell py-16 md:py-24">
+    <Reveal>
+      <SectionHeading title={s.heading} />
+
+      <div class="mt-12 grid gap-x-12 gap-y-12 md:mt-16 md:grid-cols-2 md:gap-y-16 lg:gap-x-24 lg:gap-y-20">
+        {
+          s.groups.map((group) => (
+            <div>
+              <h3 class="border-b border-line pb-3 text-base font-semibold text-text">
+                {group.title}
+              </h3>
+
+              <ul class="mt-5 space-y-3">
+                {group.items.map((entry) => {
+                  const { code, rest } = splitEntry(entry);
+                  return (
+                    <li class="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-base leading-relaxed">
+                      {code ? <span class="num tracking-[0.02em] text-text">{code}</span> : null}
+                      {rest ? (
+                        <span class={code ? 'text-text-dim' : 'text-text'}>{rest}</span>
+                      ) : null}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+    </Reveal>
+  </div>
+</section>

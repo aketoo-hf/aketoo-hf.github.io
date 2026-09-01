@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+import ContactInfo from '../components/sections/contact/ContactInfo.astro';
+import InquiryForm from '../components/InquiryForm.astro';
+import { getDict } from '../i18n';
+import type { Locale } from '../i18n/types';
+
+// thin page shell: pick the dictionary, then stack the section components in spec order
+const locale: Locale = 'zh';
+const t = getDict(locale);
+---
+
+<BaseLayout t={t} locale={locale} page="contact">
+  <section class="shell pt-14 pb-2 md:pt-20 md:pb-4">
+    <SectionHeading level={1} title={t.contact.header.title} lead={t.contact.header.lead} />
+  </section>
+
+  <!-- spec 6.6 S2: contact details on the left, inquiry form on the right, stacked on mobile -->
+  <div class="shell pt-10 pb-20 md:pt-14 md:pb-24">
+    <div class="grid gap-10 md:grid-cols-2 md:gap-12 lg:gap-16">
+      <ContactInfo t={t} locale={locale} />
+      <InquiryForm t={t} locale={locale} />
+    </div>
+  </div>
+</BaseLayout>

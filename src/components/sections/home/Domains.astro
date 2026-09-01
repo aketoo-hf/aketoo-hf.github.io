@@ -1,0 +1,155 @@
+---
+import { Image } from 'astro:assets';
+import type { Dict, Locale } from '../../../i18n/types';
+import Icon from '../../ui/Icon.astro';
+import Reveal from '../../ui/Reveal.astro';
+import busbarCoated from '../../../assets/images/busbar-coated.jpg';
+
+// s3 application domains, bento: one tall photo cell plus three raised cells.
+// each cell is a single link target that jumps to its anchor on /applications/.
+export interface Props {
+  t: Dict;
+  locale: Locale;
+}
+
+const { t, locale } = Astro.props;
+const s = t.home.domains;
+---
+
+<section
+  class="shell py-16 md:py-20 lg:py-24"
+  data-section="home/Domains"
+  data-locale={locale}
+  aria-labelledby="home-domains-heading"
+>
+  <Reveal>
+    <h2 id="home-domains-heading" class="text-2xl font-semibold text-text md:text-3xl lg:text-4xl">
+      {s.heading}
+    </h2>
+
+    <div class="bento mt-10 grid gap-4 md:mt-12">
+      <a class="cell cell-feature group relative overflow-hidden rounded-panel" href={s.feature.href}>
+        <Image
+          src={busbarCoated}
+          alt={s.feature.imageAlt}
+          widths={[480, 720, 1024]}
+          sizes="(min-width: 1024px) 58vw, 100vw"
+          loading="lazy"
+          decoding="async"
+          class="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+        />
+        <!-- gradient scrim keeps the copy at AA contrast over the photo -->
+        <span class="scrim absolute inset-0" aria-hidden="true"></span>
+
+        <span class="relative flex h-full flex-col justify-end p-6 md:p-8">
+          <span class="flex items-center gap-2 text-xl font-semibold text-text md:text-2xl">
+            {s.feature.title}
+            <Icon
+              name="arrow-right"
+              size={20}
+              class="shrink-0 text-accent transition-transform duration-200 group-hover:translate-x-1"
+            />
+          </span>
+          <span class="mt-3 max-w-[46ch] text-sm leading-relaxed text-text-dim md:text-base">
+            {s.feature.body}
+          </span>
+        </span>
+      </a>
+
+      {
+        s.items.map((item, i) => (
+          <a
+            class:list={[
+              'cell group relative flex flex-col justify-between overflow-hidden rounded-panel border border-line p-6 transition-colors duration-200 hover:border-line-strong md:p-8',
+              i === 2 ? 'cell-wide cell-tinted' : 'bg-bg-raised',
+            ]}
+            href={item.href}
+          >
+            <span class="flex items-start justify-between gap-4">
+              <span class="text-lg font-semibold text-text md:text-xl">{item.title}</span>
+              <Icon
+                name="arrow-right"
+                size={20}
+                class="mt-1 shrink-0 text-text-faint transition-all duration-200 group-hover:translate-x-1 group-hover:text-accent"
+              />
+            </span>
+            <span class="mt-4 max-w-[52ch] text-sm leading-relaxed text-text-dim">{item.body}</span>
+          </a>
+        ))
+      }
+    </div>
+  </Reveal>
+</section>
+
+<style>
+  .scrim {
+    background: linear-gradient(
+      to top,
+      rgba(8, 9, 11, 0.94) 0%,
+      rgba(8, 9, 11, 0.82) 42%,
+      rgba(8, 9, 11, 0.42) 74%,
+      rgba(8, 9, 11, 0.24) 100%
+    );
+  }
+
+  .cell {
+    min-height: 11rem;
+  }
+
+  /* one differentiated cell: raised surface with an 8% copper wash on top */
+  .cell-tinted {
+    background-color: var(--color-bg-raised);
+    background-image: linear-gradient(0deg, var(--accent-tint-8), var(--accent-tint-8));
+  }
+
+  .cell-feature {
+    min-height: 20rem;
+  }
+
+  @media (min-width: 768px) {
+    .bento {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .cell-feature,
+    .cell-wide {
+      grid-column: span 2;
+    }
+
+    .cell-feature {
+      min-height: 22rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .bento {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+
+    .cell-feature {
+      grid-column: span 7;
+      grid-row: span 2;
+      min-height: 24rem;
+    }
+
+    .cell-feature + .cell,
+    .cell-feature + .cell + .cell {
+      grid-column: span 5;
+    }
+
+    .cell-wide {
+      grid-column: span 12;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2.5rem;
+      min-height: 8.5rem;
+    }
+
+    .cell-wide > :last-child {
+      margin-top: 0;
+      max-width: 46ch;
+      text-align: right;
+    }
+  }
+</style>

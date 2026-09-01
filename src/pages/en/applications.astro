@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeading from '../../components/ui/SectionHeading.astro';
+import AiComputing from '../../components/sections/applications/AiComputing.astro';
+import Busbar from '../../components/sections/applications/Busbar.astro';
+import Passive from '../../components/sections/applications/Passive.astro';
+import Automotive from '../../components/sections/applications/Automotive.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { getDict } from '../../i18n';
+import type { Locale } from '../../i18n/types';
+
+// thin page shell: pick the dictionary, then stack the section components in spec order
+const locale: Locale = 'en';
+const t = getDict(locale);
+---
+
+<BaseLayout t={t} locale={locale} page="applications">
+  <section class="shell pt-14 pb-2 md:pt-20 md:pb-4">
+    <SectionHeading level={1} title={t.applications.header.title} lead={t.applications.header.lead} />
+  </section>
+
+  <AiComputing t={t} locale={locale} />
+  <Busbar t={t} locale={locale} />
+  <Passive t={t} locale={locale} />
+  <Automotive t={t} locale={locale} />
+
+  <CtaBand t={t} locale={locale} />
+</BaseLayout>

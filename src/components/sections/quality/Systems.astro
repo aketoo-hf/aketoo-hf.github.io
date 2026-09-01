@@ -1,0 +1,25 @@
+---
+import type { Dict, Locale } from '../../../i18n/types';
+import Reveal from '../../ui/Reveal.astro';
+import SectionHeading from '../../ui/SectionHeading.astro';
+
+// quality S4: equipment and management systems, one statement paragraph on the
+// same 4 / 8 split the about page uses for its handover story.
+export interface Props {
+  t: Dict;
+  locale: Locale;
+}
+
+const { t, locale } = Astro.props;
+const s = t.quality.systems;
+---
+
+<section class="shell py-16 md:py-24" data-section="quality/Systems" data-locale={locale}>
+  <Reveal class="grid gap-8 md:grid-cols-12 md:gap-12">
+    <SectionHeading title={s.heading} class="md:col-span-4" />
+
+    <div class="md:col-span-8">
+      <p class="max-w-[65ch] text-lg leading-relaxed text-text-dim">{s.body}</p>
+    </div>
+  </Reveal>
+</section>

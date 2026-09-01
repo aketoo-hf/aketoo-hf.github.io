@@ -1,0 +1,49 @@
+---
+import Reveal from '../../ui/Reveal.astro';
+import type { Dict, Locale } from '../../../i18n/types';
+
+// spec 6.3 S3: three grouped chunks, separated by whitespace only.
+// no full width rules between the groups, no cards.
+export interface Props {
+  t: Dict;
+  locale: Locale;
+}
+
+const { t, locale } = Astro.props;
+const s = t.products.features;
+---
+
+<section
+  class="shell py-16 md:py-24"
+  aria-labelledby="products-features-heading"
+  data-section="products/Features"
+  data-locale={locale}
+>
+  <Reveal>
+    <h2 id="products-features-heading" class="text-2xl font-semibold text-text md:text-3xl">
+      {s.heading}
+    </h2>
+
+    <div class="mt-10 grid gap-x-10 gap-y-12 md:mt-14 md:grid-cols-3 md:gap-x-12 lg:gap-x-16">
+      {
+        s.groups.map((group) => (
+          <div>
+            <span class="block h-px w-10 bg-accent" aria-hidden="true" />
+            <h3 class="mt-5 text-base font-semibold text-text md:text-lg">{group.title}</h3>
+            <ul class="mt-4 space-y-3">
+              {group.items.map((item) => (
+                <li class="flex gap-3 text-[15px] leading-relaxed text-text-dim">
+                  <span
+                    class="mt-[0.62em] h-[5px] w-[5px] shrink-0 rotate-45 bg-accent/70"
+                    aria-hidden="true"
+                  />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </Reveal>
+</section>

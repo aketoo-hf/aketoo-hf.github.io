@@ -1,0 +1,71 @@
+---
+import type { Dict, Locale } from '../../../i18n/types';
+import Icon from '../../ui/Icon.astro';
+import Reveal from '../../ui/Reveal.astro';
+
+// contact column of the contact page (spec 6.6). the address stays plain text,
+// no map embed, because the site ships with zero external dependencies.
+// every visible string comes from the dictionary
+export interface Props {
+  t: Dict;
+  locale: Locale;
+}
+
+const { t, locale } = Astro.props;
+const s = t.contact.info;
+const c = t.common.contact;
+
+interface Row {
+  icon: 'phone' | 'mail' | 'map-pin';
+  label: string;
+  value: string;
+  href?: string;
+  /** phone and email are figures, the address is prose */
+  mono: boolean;
+}
+
+const rows: Row[] = [
+  { icon: 'phone', label: c.phoneLabel, value: c.phone, href: c.phoneHref, mono: true },
+  { icon: 'mail', label: c.emailLabel, value: c.email, href: c.emailHref, mono: true },
+  { icon: 'map-pin', label: c.addressLabel, value: c.address, mono: false },
+];
+---
+
+<section data-locale={locale} aria-labelledby="contact-info-heading">
+  <Reveal>
+    <h2 id="contact-info-heading" class="text-xl font-semibold text-text md:text-2xl">
+      {s.heading}
+    </h2>
+
+    <ul class="mt-6 flex flex-col">
+      {
+        rows.map((row) => (
+          <li class="flex items-start gap-4 border-t border-line py-5 first:border-t-0 first:pt-0">
+            <span class="mt-1 shrink-0 text-accent">
+              <Icon name={row.icon} size={20} />
+            </span>
+            <div class="min-w-0">
+              <p class="text-xs text-text-dim">{row.label}</p>
+              {row.href ? (
+                <a
+                  href={row.href}
+                  class={`mt-1 inline-block text-base text-text transition-colors hover:text-accent-strong ${row.mono ? 'num' : ''}`}
+                >
+                  {row.value}
+                </a>
+              ) : (
+                <p class={`mt-1 text-base leading-relaxed text-text ${row.mono ? 'num' : ''}`}>
+                  {row.value}
+                </p>
+              )}
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="mt-6 max-w-[42ch] border-t border-line pt-6 text-sm leading-relaxed text-text-dim">
+      {s.note}
+    </p>
+  </Reveal>
+</section>

@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+import FlagshipDetail from '../components/sections/products/FlagshipDetail.astro';
+import Features from '../components/sections/products/Features.astro';
+import Process from '../components/sections/products/Process.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { getDict } from '../i18n';
+import type { Locale } from '../i18n/types';
+
+// thin page shell: pick the dictionary, then stack the section components in spec order
+const locale: Locale = 'zh';
+const t = getDict(locale);
+---
+
+<BaseLayout t={t} locale={locale} page="products">
+  <section class="shell pt-14 pb-2 md:pt-20 md:pb-4">
+    <SectionHeading level={1} title={t.products.header.title} lead={t.products.header.lead} />
+  </section>
+
+  <FlagshipDetail t={t} locale={locale} />
+  <Features t={t} locale={locale} />
+  <Process t={t} locale={locale} />
+
+  <CtaBand t={t} locale={locale} />
+</BaseLayout>

@@ -1,0 +1,113 @@
+---
+import type { Dict, Locale } from '../../../i18n/types';
+import Reveal from '../../ui/Reveal.astro';
+import SectionHeading from '../../ui/SectionHeading.astro';
+
+// quality S2: two oversized mono figures side by side, split by a single hairline.
+// the per page source footnote sits under the pair, marking these as Daejoo group data.
+export interface Props {
+  t: Dict;
+  locale: Locale;
+}
+
+const { t, locale } = Astro.props;
+const s = t.quality.investment;
+---
+
+<section class="shell py-16 md:py-24" data-section="quality/Investment" data-locale={locale}>
+  <Reveal>
+    <SectionHeading title={s.heading} />
+
+    <div class="inv-grid">
+      {
+        s.items.map((item) => (
+          <div class="inv-cell">
+            <p class="inv-value num">
+              {item.value}
+              {item.unit ? <span class="inv-unit">{item.unit}</span> : null}
+            </p>
+            <p class="inv-label">{item.label}</p>
+          </div>
+        ))
+      }
+    </div>
+
+    <p class="inv-note">{s.footnote}</p>
+  </Reveal>
+</section>
+
+<style>
+  .inv-grid {
+    margin-top: 2.5rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .inv-cell + .inv-cell {
+    margin-top: 2.5rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .inv-value {
+    font-size: clamp(3.25rem, 10vw, 5.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: var(--color-text);
+  }
+
+  .inv-unit {
+    margin-left: 0.06em;
+    font-size: 0.4em;
+    letter-spacing: normal;
+    color: var(--color-accent);
+  }
+
+  .inv-label {
+    margin-top: 1.25rem;
+    max-width: 26ch;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--color-text-dim);
+  }
+
+  .inv-note {
+    margin-top: 2.5rem;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--color-text-faint);
+  }
+
+  @media (min-width: 640px) {
+    .inv-grid {
+      margin-top: 3rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .inv-cell:first-child {
+      padding-right: 2.5rem;
+    }
+
+    .inv-cell + .inv-cell {
+      margin-top: 0;
+      padding-top: 0;
+      padding-left: 2.5rem;
+      border-top: 0;
+      border-left: 1px solid var(--color-line);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .inv-cell:first-child {
+      padding-right: 4rem;
+    }
+
+    .inv-cell + .inv-cell {
+      padding-left: 4rem;
+    }
+
+    .inv-note {
+      margin-top: 3rem;
+    }
+  }
+</style>

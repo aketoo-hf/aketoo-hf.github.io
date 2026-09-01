@@ -1,0 +1,131 @@
+---
+import type { Dict, Locale } from '../../../i18n/types';
+import Reveal from '../../ui/Reveal.astro';
+
+// s2 trust numbers: one row of four on desktop, 2x2 on mobile.
+// no cards anywhere, groups are told apart by hairline rules only.
+export interface Props {
+  t: Dict;
+  locale: Locale;
+}
+
+const { t, locale } = Astro.props;
+const s = t.home.stats;
+---
+
+<section
+  class="border-y border-line"
+  data-section="home/Stats"
+  data-locale={locale}
+  aria-labelledby="home-stats-heading"
+>
+  <div class="shell">
+    <h2 id="home-stats-heading" class="sr-only">{s.heading}</h2>
+
+    <Reveal>
+      <dl class="stats grid grid-cols-2 lg:grid-cols-4">
+        {
+          s.items.map((item) => (
+            <div class="stat">
+              <dt class="stat-label">{item.label}</dt>
+              <dd class="stat-value">
+                <span class="num stat-figure">{item.value}</span>
+                {item.unit && <span class="num stat-unit">{item.unit}</span>}
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+    </Reveal>
+  </div>
+</section>
+
+<style>
+  .stat {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 2rem 0 2rem 1.25rem;
+  }
+
+  .stat-value {
+    order: 1;
+    display: flex;
+    align-items: baseline;
+    gap: 0.375rem;
+    margin: 0;
+  }
+
+  .stat-figure {
+    font-size: 1.75rem;
+    line-height: 1;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .stat-unit {
+    font-size: 0.875rem;
+    line-height: 1;
+    color: var(--color-accent);
+  }
+
+  .stat-label {
+    order: 2;
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.45;
+    color: var(--color-text-dim);
+  }
+
+  /* hairline rules between groups, drawn on the cell so nothing reads as a card */
+  .stat + .stat {
+    border-left: 1px solid var(--color-line);
+  }
+
+  .stat:nth-child(odd) {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .stat:nth-child(n + 3) {
+    border-top: 1px solid var(--color-line);
+  }
+
+  @media (min-width: 768px) {
+    .stat {
+      padding-block: 2.5rem;
+    }
+
+    .stat-figure {
+      font-size: 2.5rem;
+    }
+
+    .stat-unit {
+      font-size: 1rem;
+    }
+
+    .stat-label {
+      margin-top: 1rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .stat,
+    .stat:nth-child(odd),
+    .stat:nth-child(n + 3) {
+      padding-block: 3rem;
+      padding-left: 2rem;
+      border-left: 1px solid var(--color-line);
+      border-top: 0;
+    }
+
+    .stat:first-child {
+      padding-left: 0;
+      border-left: 0;
+    }
+
+    .stat-figure {
+      font-size: 2.75rem;
+    }
+  }
+</style>

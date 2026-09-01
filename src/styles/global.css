@@ -1,0 +1,255 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   AKETOO design tokens (spec section 2 / 3)
+   dark-locked, copper is the only accent, no theme inversion anywhere
+   ========================================================================== */
+
+@theme {
+  /* surfaces */
+  --color-bg: #0C0E10;
+  --color-bg-raised: #14171B;
+  --color-bg-sunken: #08090B;
+
+  /* hairlines */
+  --color-line: rgba(255, 255, 255, 0.09);
+  --color-line-strong: rgba(255, 255, 255, 0.18);
+
+  /* text */
+  --color-text: #F3F2EF;
+  --color-text-dim: #A6ACB2;
+  --color-text-faint: #6E757C;
+
+  /* copper, the single accent */
+  --color-accent: #C97C4E;
+  --color-accent-strong: #E09563;
+  --color-accent-ink: #1A0F08;
+
+  /* radius system: 8px controls, 14px panels, everything else square */
+  --radius-control: 8px;
+  --radius-panel: 14px;
+
+  /* type stacks (system fonts only, zero external requests) */
+  --font-sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Mono", Menlo, monospace;
+
+  /* layout rhythm */
+  --spacing-section: 6rem;
+}
+
+/* non-tailwind design constants */
+:root {
+  --header-h: 68px;
+  --shell-max: 1200px;
+  --accent-tint-8: rgba(201, 124, 78, 0.08);
+  --top-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  color-scheme: dark;
+}
+
+/* ==========================================================================
+   base
+   ========================================================================== */
+
+@layer base {
+  html {
+    background-color: var(--color-bg);
+    scroll-behavior: smooth;
+    /* keep in-page anchors clear of the sticky header */
+    scroll-padding-top: calc(var(--header-h) + 24px);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4 {
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: normal;
+    color: var(--color-text);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  img, svg, video {
+    display: block;
+    max-width: 100%;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-accent-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* native controls inherit the dark shell */
+  input, textarea, select, button {
+    font: inherit;
+    color: inherit;
+  }
+
+  /* text-dim, not text-faint: placeholders are real text and must clear AA
+     (text-faint is 4.1:1 on the dark surfaces, below the 4.5:1 threshold) */
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-text-dim);
+    opacity: 1;
+  }
+
+  /* mono digits everywhere numbers matter */
+  code, kbd, samp, pre {
+    font-family: var(--font-mono);
+  }
+}
+
+/* ==========================================================================
+   utilities
+   ========================================================================== */
+
+@layer utilities {
+  /* page shell */
+  .shell {
+    width: 100%;
+    max-width: var(--shell-max);
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .shell {
+      padding-inline: 2rem;
+    }
+  }
+
+  /* tabular mono numerals for every spec figure */
+  .num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
+
+  .tabular-figures {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
+
+  /* eyebrow label, strictly rationed by the spec (max 1 per 3 sections) */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-text-faint);
+  }
+
+  .hairline-t {
+    border-top: 1px solid var(--color-line);
+  }
+
+  .hairline-b {
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .top-highlight {
+    box-shadow: var(--top-highlight);
+  }
+
+  .accent-tint {
+    background-color: var(--accent-tint-8);
+  }
+
+  /* screen reader only, used by the skip link before it is focused */
+  .sr-only-focusable:not(:focus):not(:focus-within) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+}
+
+/* ==========================================================================
+   motion (spec section 9)
+   every animation lives inside prefers-reduced-motion: no-preference
+   and inside html.js, so a no-script render is fully visible
+   ========================================================================== */
+
+/* reveal-on-scroll: visible by default, armed only when js + motion are ok */
+.reveal {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html.js .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    will-change: opacity, transform;
+  }
+
+  html.js .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* hero one-shot entrance, 3 elements, 120ms cascade */
+  html.js .hero-in {
+    animation: aketoo-hero-in 0.6s ease-out both;
+  }
+
+  html.js .hero-in-1 { animation-delay: 0ms; }
+  html.js .hero-in-2 { animation-delay: 120ms; }
+  html.js .hero-in-3 { animation-delay: 240ms; }
+}
+
+@keyframes aketoo-hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

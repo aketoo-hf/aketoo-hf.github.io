@@ -1,0 +1,57 @@
+---
+import { Image } from 'astro:assets';
+import Reveal from '../../ui/Reveal.astro';
+import busbarCoated from '../../../assets/images/busbar-coated.jpg';
+import type { Dict, Locale } from '../../../i18n/types';
+
+// spec 6.4 S3: split with the coated busbar photo on the left, copy on the right,
+// the coating value sentence set off by a copper rule.
+export interface Props {
+  t: Dict;
+  locale: Locale;
+}
+
+const { t, locale } = Astro.props;
+const s = t.applications.busbar;
+const headingId = `${s.id}-heading`;
+---
+
+<section
+  id={s.id}
+  class="shell py-16 md:py-24"
+  aria-labelledby={headingId}
+  data-section="applications/Busbar"
+  data-locale={locale}
+>
+  <Reveal class="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
+    <div class="overflow-hidden rounded-panel border border-line">
+      <Image
+        src={busbarCoated}
+        alt={s.imageAlt}
+        widths={[480, 720, 1024]}
+        sizes="(min-width: 1024px) 46vw, 100vw"
+        class="aspect-[5/4] w-full object-cover"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+
+    <div>
+      <span class="block h-px w-10 bg-accent" aria-hidden="true"></span>
+
+      <h2 id={headingId} class="mt-6 text-2xl font-semibold text-text md:text-3xl lg:text-4xl">
+        {s.heading}
+      </h2>
+
+      <p class="mt-6 max-w-[60ch] text-base leading-relaxed text-text-dim">{s.body}</p>
+
+      {
+        s.note && (
+          <p class="mt-6 max-w-[56ch] border-l-2 border-accent/60 pl-5 text-[15px] leading-relaxed text-text">
+            {s.note}
+          </p>
+        )
+      }
+    </div>
+  </Reveal>
+</section>

@@ -1,0 +1,255 @@
+---
+import type { Dict, Locale } from '../i18n/types';
+import Button from './ui/Button.astro';
+
+// inquiry form for the contact page (spec 4.4). labels sit above the fields,
+// errors below, placeholders are never used as labels
+export interface Props {
+  t: Dict;
+  locale: Locale;
+  id?: string;
+}
+
+const { t, locale, id = 'inquiry' } = Astro.props;
+const f = t.form;
+
+const fields = [
+  { key: 'name', type: 'text', required: true, autocomplete: 'name' },
+  { key: 'company', type: 'text', required: true, autocomplete: 'organization' },
+  { key: 'phone', type: 'tel', required: true, autocomplete: 'tel' },
+  { key: 'email', type: 'email', required: false, autocomplete: 'email' },
+] as const;
+
+const payload = {
+  errors: f.errors,
+  submit: f.submit,
+  submitting: f.submitting,
+  success: f.success,
+  failure: f.failure,
+  mailtoNote: f.mailtoNote,
+  mailtoSubject: f.mailtoSubject,
+  mailtoIntro: f.mailtoIntro,
+  labels: f.labels,
+  email: t.common.contact.email,
+};
+---
+
+<section
+  id={id}
+  data-locale={locale}
+  class="rounded-panel border border-line bg-bg-raised p-6 md:p-8"
+  aria-labelledby={`${id}-heading`}
+>
+  <h2 id={`${id}-heading`} class="text-xl font-semibold text-text md:text-2xl">{f.heading}</h2>
+  <p class="mt-2 max-w-[52ch] text-sm leading-relaxed text-text-dim">{f.intro}</p>
+
+  <form id="inquiry-form" class="mt-7 flex flex-col gap-5" novalidate>
+    {
+      fields.map((field) => (
+        <div class="flex flex-col gap-2">
+          <label for={`inquiry-${field.key}`} class="text-sm text-text">
+            {f.labels[field.key]}
+            <span class="ml-1.5 text-xs text-text-dim">
+              {field.required ? f.requiredMark : f.optionalMark}
+            </span>
+          </label>
+          <input
+            id={`inquiry-${field.key}`}
+            name={field.key}
+            type={field.type}
+            autocomplete={field.autocomplete}
+            placeholder={f.placeholders[field.key]}
+            maxlength="120"
+            data-required={field.required ? 'true' : 'false'}
+            class="rounded-control border border-line-strong bg-bg px-3.5 py-3 text-base text-text placeholder:text-text-dim focus:border-accent"
+          />
+          <p id={`inquiry-${field.key}-error`} class="hidden text-sm text-accent-strong" role="alert" />
+        </div>
+      ))
+    }
+
+    <div class="flex flex-col gap-2">
+      <label for="inquiry-message" class="text-sm text-text">
+        {f.labels.message}
+        <span class="ml-1.5 text-xs text-text-dim">{f.requiredMark}</span>
+      </label>
+      <textarea
+        id="inquiry-message"
+        name="message"
+        rows="5"
+        maxlength="2000"
+        data-required="true"
+        placeholder={f.placeholders.message}
+        class="rounded-control border border-line-strong bg-bg px-3.5 py-3 text-base leading-relaxed text-text placeholder:text-text-dim focus:border-accent"
+      ></textarea>
+      <p id="inquiry-message-error" class="hidden text-sm text-accent-strong" role="alert"></p>
+    </div>
+
+    <div class="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
+      <Button variant="primary" type="submit" id="inquiry-submit">{f.submit}</Button>
+      <p id="inquiry-status" class="hidden" role="status" aria-live="polite"></p>
+    </div>
+  </form>
+
+  <script is:inline type="application/json" id="inquiry-data" set:html={JSON.stringify(payload)}></script>
+</section>
+
+<script>
+  // set to '/api/inquiry' once a backend endpoint is reverse proxied by nginx
+  // (see DEPLOY.md section 5). while it is null the form degrades to a
+  // prefilled mailto draft, so the static build needs no backend at all.
+  const FORM_ENDPOINT: string | null = null;
+
+  interface InquiryData {
+    errors: Record<string, string>;
+    submit: string;
+    submitting: string;
+    success: string;
+    failure: string;
+    mailtoNote: string;
+    mailtoSubject: string;
+    mailtoIntro: string;
+    labels: Record<string, string>;
+    email: string;
+  }
+
+  const dataEl = document.getElementById('inquiry-data');
+  const form = document.getElementById('inquiry-form') as HTMLFormElement | null;
+  const status = document.getElementById('inquiry-status');
+  const submitBtn = document.getElementById('inquiry-submit') as HTMLButtonElement | null;
+
+  if (dataEl && form && status && submitBtn) {
+    const data: InquiryData = JSON.parse(dataEl.textContent || '{}');
+    const submitLabel = submitBtn.textContent || data.submit;
+
+    // rough phone check: strip separators, then accept an 11 digit chinese
+    // mobile number, or 6 to 20 digits for landline and overseas numbers
+    const phoneOk = (value: string) => {
+      const digits = value.replace(/[\s\-()+]/g, '');
+      if (!/^\d{6,20}$/.test(digits)) return false;
+      const local = digits.replace(/^(?:0086|86)/, '');
+      if (local.length === 11 && local.startsWith('1')) return /^1[3-9]\d{9}$/.test(local);
+      return true;
+    };
+
+    const emailOk = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
+    const fieldIds = ['name', 'company', 'phone', 'email', 'message'];
+
+    const setError = (key: string, message: string) => {
+      const field = document.getElementById(`inquiry-${key}`);
+      const box = document.getElementById(`inquiry-${key}-error`);
+      if (!field || !box) return;
+      if (message) {
+        box.textContent = message;
+        box.classList.remove('hidden');
+        field.setAttribute('aria-invalid', 'true');
+        field.setAttribute('aria-describedby', `inquiry-${key}-error`);
+      } else {
+        box.textContent = '';
+        box.classList.add('hidden');
+        field.removeAttribute('aria-invalid');
+        field.removeAttribute('aria-describedby');
+      }
+    };
+
+    const values = () => {
+      const out: Record<string, string> = {};
+      for (const key of fieldIds) {
+        const el = document.getElementById(`inquiry-${key}`) as
+          | HTMLInputElement
+          | HTMLTextAreaElement
+          | null;
+        out[key] = el ? el.value.trim() : '';
+      }
+      return out;
+    };
+
+    const validate = (v: Record<string, string>) => {
+      let ok = true;
+      const check = (key: string, message: string) => {
+        setError(key, message);
+        if (message) ok = false;
+      };
+
+      check('name', v.name ? '' : data.errors.name);
+      check('company', v.company ? '' : data.errors.company);
+      check(
+        'phone',
+        !v.phone ? data.errors.phone : phoneOk(v.phone) ? '' : data.errors.phoneFormat
+      );
+      check('email', !v.email || emailOk(v.email) ? '' : data.errors.email);
+      check('message', v.message ? '' : data.errors.message);
+
+      if (!ok) {
+        const first = fieldIds.find((key) =>
+          document.getElementById(`inquiry-${key}`)?.hasAttribute('aria-invalid')
+        );
+        if (first) document.getElementById(`inquiry-${first}`)?.focus();
+      }
+      return ok;
+    };
+
+    // inline state, never a toast. tone is carried by the border and the text colour
+    const showStatus = (message: string, tone: 'ok' | 'note' | 'error') => {
+      const tones = {
+        ok: 'border-line-strong text-text',
+        note: 'border-line-strong text-text-dim',
+        error: 'border-accent text-accent-strong',
+      };
+      status.className = `rounded-control border px-3.5 py-2.5 text-sm leading-relaxed ${tones[tone]}`;
+      status.textContent = message;
+    };
+
+    const mailtoFallback = (v: Record<string, string>) => {
+      const lines = [
+        data.mailtoIntro,
+        '',
+        `${data.labels.name}: ${v.name}`,
+        `${data.labels.company}: ${v.company}`,
+        `${data.labels.phone}: ${v.phone}`,
+        `${data.labels.email}: ${v.email}`,
+        `${data.labels.message}: ${v.message}`,
+      ];
+      const href =
+        `mailto:${data.email}?subject=${encodeURIComponent(data.mailtoSubject)}` +
+        `&body=${encodeURIComponent(lines.join('\r\n'))}`;
+      window.location.href = href;
+      showStatus(data.mailtoNote, 'note');
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const v = values();
+      if (!validate(v)) return;
+
+      if (!FORM_ENDPOINT) {
+        mailtoFallback(v);
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = data.submitting;
+      try {
+        const res = await fetch(FORM_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(v),
+        });
+        if (!res.ok) throw new Error('request failed');
+        form.reset();
+        showStatus(data.success, 'ok');
+      } catch {
+        showStatus(data.failure, 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = submitLabel;
+      }
+    });
+
+    // clear a field level error as soon as the visitor starts fixing it
+    for (const key of fieldIds) {
+      document.getElementById(`inquiry-${key}`)?.addEventListener('input', () => setError(key, ''));
+    }
+  }
+</script>

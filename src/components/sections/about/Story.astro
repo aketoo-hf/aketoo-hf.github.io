@@ -1,0 +1,36 @@
+---
+import type { Dict, Locale } from '../../../i18n/types';
+import Reveal from '../../ui/Reveal.astro';
+import SectionHeading from '../../ui/SectionHeading.astro';
+
+// about S2: the handover story, two paragraphs on a 4 / 8 editorial split.
+// no eyebrow here, the about page runs zero eyebrows by design.
+export interface Props {
+  t: Dict;
+  locale: Locale;
+}
+
+const { t, locale } = Astro.props;
+const s = t.about.story;
+---
+
+<section class="shell py-16 md:py-24" data-section="about/Story" data-locale={locale}>
+  <Reveal class="grid gap-8 md:grid-cols-12 md:gap-12">
+    <SectionHeading title={s.heading} class="md:col-span-4" />
+
+    <div class="max-w-[65ch] md:col-span-8">
+      {
+        s.paragraphs.map((paragraph, i) => (
+          <p
+            class:list={[
+              'leading-relaxed',
+              i === 0 ? 'text-lg text-text' : 'mt-6 text-base text-text-dim',
+            ]}
+          >
+            {paragraph}
+          </p>
+        ))
+      }
+    </div>
+  </Reveal>
+</section>

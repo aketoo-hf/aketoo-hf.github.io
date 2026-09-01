@@ -1,0 +1,141 @@
+---
+import { Image } from 'astro:assets';
+import type { Dict, Locale } from '../../../i18n/types';
+import { pageHref } from '../../../i18n';
+import Button from '../../ui/Button.astro';
+import powderGreen from '../../../assets/images/powder-green.jpg';
+import textureDark from '../../../assets/images/texture-dark.jpg';
+
+// s1 hero: asymmetric 55/45 split, the page's only eyebrow, two locked headline
+// lines, and the lcp photo on the right. entrance cascade is limited to the
+// three groups below (spec section 9).
+export interface Props {
+  t: Dict;
+  locale: Locale;
+}
+
+const { t, locale } = Astro.props;
+const s = t.home.hero;
+const cta = t.common.cta;
+const buttons = t.common.buttons;
+const productsHref = pageHref('products', locale);
+---
+
+<section
+  class="hero relative isolate overflow-hidden"
+  data-section="home/Hero"
+  data-locale={locale}
+  aria-labelledby="home-hero-title"
+>
+  <!-- texture backdrop, masked so it fades out before it reaches the photo -->
+  <div class="hero-texture pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+    <Image
+      src={textureDark}
+      alt=""
+      widths={[768, 1280]}
+      sizes="100vw"
+      loading="eager"
+      decoding="async"
+      fetchpriority="low"
+      class="h-full w-full object-cover opacity-25"
+    />
+  </div>
+
+  <div class="shell relative z-10 pt-14 pb-16 md:pt-20 md:pb-20 lg:pt-24 lg:pb-24">
+    <div class="hero-grid grid items-center gap-10 md:gap-12 lg:gap-16">
+      <div class="hero-copy">
+        <div class="hero-in hero-in-1">
+          <p class="eyebrow">{s.eyebrow}</p>
+          <h1
+            id="home-hero-title"
+            class:list={['hero-title mt-6 font-semibold text-text', `hero-title-${locale}`]}
+          >
+            {s.titleLine1}<br />{s.titleLine2}
+          </h1>
+        </div>
+
+        <div class="hero-in hero-in-2">
+          <p class="mt-6 max-w-[46ch] text-base leading-relaxed text-text-dim md:mt-7">
+            {s.subtitle}
+          </p>
+
+          <div class="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+            <Button variant="primary" href={cta.buttonHref}>{buttons.requestSample}</Button>
+            <Button variant="secondary" href={productsHref}>{buttons.exploreProducts}</Button>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-in hero-in-3">
+        <div class="overflow-hidden rounded-panel border border-line">
+          <Image
+            src={powderGreen}
+            alt={s.imageAlt}
+            widths={[480, 720, 960, 1024]}
+            sizes="(min-width: 1024px) 45vw, (min-width: 768px) 80vw, 100vw"
+            loading="eager"
+            decoding="sync"
+            fetchpriority="high"
+            class="hero-photo w-full object-cover"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* the backdrop dies out to the right and toward the fold */
+  .hero-texture {
+    -webkit-mask-image: linear-gradient(to right, #000 0%, #000 38%, transparent 80%);
+    mask-image: linear-gradient(to right, #000 0%, #000 38%, transparent 80%);
+  }
+
+  /* fluid headline: sized so both locked lines always clear their column,
+     capped well under the text-6xl ceiling the spec sets */
+  .hero-title {
+    line-height: 1.18;
+    /* the two lines are locked by the explicit break, so no re-balancing */
+    text-wrap: normal;
+  }
+
+  .hero-title-zh {
+    font-size: clamp(2.25rem, 5vw, 3.5rem);
+  }
+
+  .hero-title-en {
+    font-size: clamp(1.75rem, 4vw, 2.875rem);
+  }
+
+  .hero-photo {
+    aspect-ratio: 3 / 2;
+  }
+
+  @media (min-width: 768px) {
+    .hero-photo {
+      aspect-ratio: 16 / 10;
+    }
+  }
+
+  /* 55 / 45 asymmetric split only once there is room for it */
+  @media (min-width: 1024px) {
+    .hero-grid {
+      grid-template-columns: minmax(0, 55fr) minmax(0, 45fr);
+    }
+
+    .hero-photo {
+      aspect-ratio: 5 / 4;
+    }
+
+    /* headline, sub copy and cta stay above the fold without scrolling */
+    .hero {
+      min-height: calc(100svh - var(--header-h));
+      display: flex;
+      align-items: center;
+    }
+
+    .hero > .shell {
+      width: 100%;
+    }
+  }
+</style>

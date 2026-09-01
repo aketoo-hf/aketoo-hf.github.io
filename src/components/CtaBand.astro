@@ -1,0 +1,53 @@
+---
+import type { Dict, Locale } from '../i18n/types';
+import Button from './ui/Button.astro';
+import Reveal from './ui/Reveal.astro';
+
+// shared action band (spec 6.1 S6), reused verbatim by home S6 and by the
+// about / products / applications / quality pages.
+// centring is the manifesto exception granted by the spec for this band only.
+// copy always comes from dict.common.cta, never from the page
+export interface Props {
+  t: Dict;
+  locale: Locale;
+  class?: string;
+}
+
+const { t, locale, class: className = '' } = Astro.props;
+const cta = t.common.cta;
+const c = t.common.contact;
+---
+
+<section
+  class={['bg-bg-raised border-t border-line top-highlight', className].filter(Boolean).join(' ')}
+  data-locale={locale}
+  aria-labelledby="cta-band-heading"
+>
+  <div class="shell py-16 md:py-20">
+    <Reveal class="mx-auto max-w-[52rem] text-center">
+      <h2 id="cta-band-heading" class="text-2xl font-semibold text-text md:text-3xl">
+        {cta.heading}
+      </h2>
+      <p class="mx-auto mt-4 max-w-[52ch] text-base leading-relaxed text-text-dim">{cta.body}</p>
+
+      <div class="mt-8 flex flex-col items-center justify-center gap-6 sm:flex-row sm:gap-10">
+        <Button variant="primary" href={cta.buttonHref}>{cta.button}</Button>
+
+        <div class="flex flex-col items-center gap-2 text-sm sm:items-start">
+          <a
+            href={c.phoneHref}
+            class="num text-text-dim transition-colors hover:text-accent-strong"
+          >
+            <span class="sr-only">{cta.phoneLabel}</span>{c.phone}
+          </a>
+          <a
+            href={c.emailHref}
+            class="num text-text-dim transition-colors hover:text-accent-strong"
+          >
+            <span class="sr-only">{cta.emailLabel}</span>{c.email}
+          </a>
+        </div>
+      </div>
+    </Reveal>
+  </div>
+</section>

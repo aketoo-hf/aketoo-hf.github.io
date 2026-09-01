@@ -1,0 +1,96 @@
+---
+import type { Dict, Locale } from '../i18n/types';
+import { getNavLinks } from '../i18n';
+import Icon from './ui/Icon.astro';
+
+export interface Props {
+  t: Dict;
+  locale: Locale;
+}
+
+const { t, locale } = Astro.props;
+const links = getNavLinks(t, locale);
+const c = t.common.contact;
+---
+
+<footer class="bg-bg-sunken border-t border-line">
+  <div class="shell py-14 md:py-16">
+    <div class="grid gap-10 md:grid-cols-3 md:gap-12">
+      <!-- company -->
+      <div>
+        <h2 class="text-sm font-semibold text-text">{t.footer.companyNameLocal}</h2>
+        <p class="mt-2 text-xs leading-relaxed tracking-[0.04em] text-text-dim">
+          {t.footer.companyNameLatin}
+        </p>
+        <p class="mt-4 max-w-[42ch] text-sm leading-relaxed text-text-dim">{t.footer.tagline}</p>
+      </div>
+
+      <!-- navigation -->
+      <div>
+        <h2 class="text-sm font-semibold text-text">{t.footer.navHeading}</h2>
+        <ul class="mt-4 flex flex-col gap-2.5">
+          {
+            links.map((link) => (
+              <li>
+                <a href={link.href} class="text-sm text-text-dim transition-colors hover:text-accent-strong">
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <!-- contact -->
+      <div>
+        <h2 class="text-sm font-semibold text-text">{t.footer.contactHeading}</h2>
+        <ul class="mt-4 flex flex-col gap-3">
+          <li class="flex items-start gap-3">
+            <Icon name="phone" size={18} class="mt-0.5 shrink-0 text-text-faint" />
+            <a href={c.phoneHref} class="num text-sm text-text-dim transition-colors hover:text-accent-strong">
+              {c.phone}
+            </a>
+          </li>
+          <li class="flex items-start gap-3">
+            <Icon name="mail" size={18} class="mt-0.5 shrink-0 text-text-faint" />
+            <a href={c.emailHref} class="text-sm text-text-dim transition-colors hover:text-accent-strong">
+              {c.email}
+            </a>
+          </li>
+          <li class="flex items-start gap-3">
+            <Icon name="map-pin" size={18} class="mt-0.5 shrink-0 text-text-faint" />
+            <span class="max-w-[36ch] text-sm leading-relaxed text-text-dim">{c.address}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- data source footnote (spec 4.2) -->
+    <p class="mt-12 text-sm text-text-faint">{t.footer.sourceNote}</p>
+  </div>
+
+  <div class="border-t border-line">
+    <div class="shell flex flex-col gap-3 py-6 text-sm text-text-faint md:flex-row md:items-center md:justify-between">
+      <p>{t.footer.copyright}</p>
+      <p class="flex flex-wrap items-center gap-x-5 gap-y-2">
+        {/* TODO replace the placeholder filing numbers before go live */}
+        <a
+          href={t.footer.icpHref}
+          rel="noopener noreferrer nofollow"
+          target="_blank"
+          class="text-text-dim transition-colors hover:text-accent-strong"
+        >
+          {t.footer.icpText}
+        </a>
+        <a
+          href={t.footer.policeHref}
+          rel="noopener noreferrer nofollow"
+          target="_blank"
+          class="text-text-dim transition-colors hover:text-accent-strong"
+        >
+          {t.footer.policeText}
+        </a>
+      </p>
+    </div>
+  </div>
+</footer>

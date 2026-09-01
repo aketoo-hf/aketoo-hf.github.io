@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+import Story from '../components/sections/about/Story.astro';
+import Timeline from '../components/sections/about/Timeline.astro';
+import Facility from '../components/sections/about/Facility.astro';
+import Footprint from '../components/sections/about/Footprint.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { getDict } from '../i18n';
+import type { Locale } from '../i18n/types';
+
+// thin page shell: pick the dictionary, then stack the section components in spec order
+const locale: Locale = 'zh';
+const t = getDict(locale);
+---
+
+<BaseLayout t={t} locale={locale} page="about">
+  <section class="shell pt-14 pb-2 md:pt-20 md:pb-4">
+    <SectionHeading level={1} title={t.about.header.title} lead={t.about.header.lead} />
+  </section>
+
+  <Story t={t} locale={locale} />
+  <Timeline t={t} locale={locale} />
+  <Facility t={t} locale={locale} />
+  <Footprint t={t} locale={locale} />
+
+  <CtaBand t={t} locale={locale} />
+</BaseLayout>

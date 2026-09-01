@@ -1,0 +1,85 @@
+---
+import type { Dict, Locale } from '../../../i18n/types';
+import Icon from '../../ui/Icon.astro';
+import Reveal from '../../ui/Reveal.astro';
+
+// s5 technology endorsement: a plain vertical statement, no cards and no badge
+// wall. the certification line sits in a hairline delimited strip below it.
+export interface Props {
+  t: Dict;
+  locale: Locale;
+}
+
+const { t, locale } = Astro.props;
+const s = t.home.endorsement;
+---
+
+<section
+  class="shell py-16 md:py-20 lg:py-24"
+  data-section="home/Endorsement"
+  data-locale={locale}
+  aria-labelledby="home-endorsement-heading"
+>
+  <Reveal class="max-w-[68rem]">
+    <h2
+      id="home-endorsement-heading"
+      class="max-w-[20ch] text-2xl font-semibold text-text md:text-3xl lg:text-[2.5rem] lg:leading-[1.2]"
+    >
+      {s.heading}
+    </h2>
+
+    <p class="mt-6 max-w-[65ch] text-base leading-relaxed text-text-dim md:mt-8 md:text-lg">
+      {s.body}
+    </p>
+
+    <p class="certs mt-10 md:mt-12">{s.certifications}</p>
+
+    <a href={s.linkHref} class="text-link group mt-8 inline-flex items-center gap-2">
+      <span>{s.linkLabel}</span>
+      <Icon
+        name="arrow-right"
+        size={18}
+        class="shrink-0 transition-transform duration-200 group-hover:translate-x-1"
+      />
+    </a>
+  </Reveal>
+</section>
+
+<style>
+  /* hairline delimited row, deliberately not a badge wall */
+  .certs {
+    border-top: 1px solid var(--color-line);
+    border-bottom: 1px solid var(--color-line);
+    padding-block: 1rem;
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: var(--color-text-dim);
+  }
+
+  @media (min-width: 768px) {
+    .certs {
+      padding-block: 1.125rem;
+      font-size: 0.9375rem;
+    }
+  }
+
+  .text-link {
+    color: var(--color-accent);
+    font-size: 0.9375rem;
+    transition: color 0.15s ease;
+  }
+
+  .text-link > span {
+    border-bottom: 1px solid transparent;
+    padding-bottom: 2px;
+    transition: border-color 0.15s ease;
+  }
+
+  .text-link:hover {
+    color: var(--color-accent-strong);
+  }
+
+  .text-link:hover > span {
+    border-bottom-color: currentColor;
+  }
+</style>

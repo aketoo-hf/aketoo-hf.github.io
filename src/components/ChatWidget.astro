@@ -1,0 +1,479 @@
+---
+import type { Dict, Locale } from '../i18n/types';
+import Icon from './ui/Icon.astro';
+
+// floating assistant, mounted once per page from BaseLayout (spec 4.3).
+// all copy comes from dict.chat, the faq payload is handed to the client as json
+export interface Props {
+  t: Dict;
+  locale: Locale;
+}
+
+const { t, locale } = Astro.props;
+const chat = t.chat;
+
+const payload = {
+  faq: chat.faq,
+  fallback: chat.fallback,
+  youLabel: chat.youLabel,
+  botLabel: chat.botLabel,
+  launcherLabel: chat.launcherLabel,
+  closeLabel: chat.closeLabel,
+};
+---
+
+<div class="chat-root" data-locale={locale}>
+  <!-- launcher: 56px rounded square, copper icon on the raised surface -->
+  <button
+    type="button"
+    id="chat-launcher"
+    class="chat-launcher"
+    aria-label={chat.launcherLabel}
+    aria-expanded="false"
+    aria-controls="chat-panel"
+  >
+    <span data-icon="open"><Icon name="chat" size={24} /></span>
+    <span data-icon="close" hidden><Icon name="close" size={24} /></span>
+  </button>
+
+  <!-- panel: 360x520 on desktop, full screen sheet below 640px -->
+  <section
+    id="chat-panel"
+    hidden
+    role="dialog"
+    aria-modal="false"
+    aria-label={chat.panelLabel}
+    class="chat-panel"
+  >
+    <header class="chat-head">
+      <div>
+        <p class="chat-head-title">{chat.title}</p>
+        <p class="chat-head-sub">{chat.subtitle}</p>
+      </div>
+      <button type="button" id="chat-close" class="chat-close" aria-label={chat.closeLabel}>
+        <Icon name="close" size={18} />
+      </button>
+    </header>
+
+    <div id="chat-log" class="chat-log" role="log" aria-live="polite" aria-atomic="false">
+      <div class="chat-msg chat-msg-bot">
+        <span class="sr-only">{chat.botLabel}</span>
+        <p>{chat.welcome}</p>
+      </div>
+    </div>
+
+    <div id="chat-chips" class="chat-chips">
+      {
+        chat.chips.map((chip) => (
+          <button type="button" class="chat-chip" data-chip={chip}>
+            {chip}
+          </button>
+        ))
+      }
+    </div>
+
+    <form id="chat-form" class="chat-form">
+      <label class="sr-only" for="chat-input">{chat.inputLabel}</label>
+      <input
+        id="chat-input"
+        name="message"
+        type="text"
+        autocomplete="off"
+        enterkeyhint="send"
+        maxlength="300"
+        placeholder={chat.inputPlaceholder}
+        class="chat-input"
+      />
+      <button type="submit" class="chat-send" aria-label={chat.sendLabel}>
+        <Icon name="send" size={18} />
+      </button>
+    </form>
+  </section>
+
+  <script is:inline type="application/json" id="chat-data" set:html={JSON.stringify(payload)}></script>
+</div>
+
+<!--
+  global styles on purpose: message bubbles are created by the client script and
+  would never carry astro's scoping attribute. every selector is namespaced
+  under .chat-root so nothing leaks into the rest of the site.
+-->
+<style is:global>
+  .chat-root .chat-launcher {
+    position: fixed;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-control);
+    background-color: var(--color-bg-raised);
+    box-shadow: var(--top-highlight);
+    color: var(--color-accent);
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .chat-root .chat-launcher:hover {
+    border-color: var(--color-line-strong);
+    color: var(--color-accent-strong);
+  }
+
+  .chat-root .chat-launcher:active {
+    transform: translateY(1px);
+  }
+
+  .chat-root .chat-panel {
+    position: fixed;
+    z-index: 70;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: var(--color-bg-raised);
+    color: var(--color-text);
+    /* mobile: full screen sheet, square corners, no border */
+    inset: 0;
+    border: 0;
+    border-radius: 0;
+  }
+
+  @media (min-width: 640px) {
+    .chat-root .chat-panel {
+      /* sits above the launcher: 1.5rem gutter + 56px button + 0.75rem gap */
+      inset: auto 1.5rem calc(1.5rem + 56px + 0.75rem) auto;
+      width: 360px;
+      height: 520px;
+      max-height: calc(100vh - 9rem);
+      max-height: calc(100dvh - 9rem);
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius-panel);
+      box-shadow: var(--top-highlight);
+    }
+  }
+
+  .chat-root .chat-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .chat-root .chat-head-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--color-text);
+  }
+
+  .chat-root .chat-head-sub {
+    margin-top: 0.125rem;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--color-text-dim);
+  }
+
+  .chat-root .chat-close {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    margin-right: -0.25rem;
+    border-radius: var(--radius-control);
+    color: var(--color-text-dim);
+    transition: color 0.15s ease;
+  }
+
+  .chat-root .chat-close:hover {
+    color: var(--color-text);
+  }
+
+  .chat-root .chat-log {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .chat-root .chat-msg {
+    max-width: 85%;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-control);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+  }
+
+  .chat-root .chat-msg-bot {
+    align-self: flex-start;
+    border: 1px solid var(--color-line);
+    background-color: var(--color-bg);
+    color: var(--color-text-dim);
+  }
+
+  .chat-root .chat-msg-user {
+    align-self: flex-end;
+    background-color: var(--color-accent);
+    color: var(--color-accent-ink);
+  }
+
+  .chat-root .chat-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .chat-root .chat-chip {
+    padding: 0.375rem 0.75rem;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-control);
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--color-text-dim);
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .chat-root .chat-chip:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent-strong);
+  }
+
+  .chat-root .chat-form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-top: 1px solid var(--color-line);
+    /* keep the composer clear of the home indicator on ios */
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+
+  @media (min-width: 640px) {
+    .chat-root .chat-form {
+      padding-bottom: 0.75rem;
+    }
+  }
+
+  .chat-root .chat-input {
+    min-width: 0;
+    flex: 1 1 auto;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-control);
+    background-color: var(--color-bg);
+    font-size: 0.875rem;
+    color: var(--color-text);
+  }
+
+  @media (max-width: 639px) {
+    .chat-root .chat-input {
+      /* 16px keeps ios from zooming the viewport on focus */
+      font-size: 1rem;
+    }
+  }
+
+  /* the copper border marks the active field, the global focus-visible ring
+     still lands on top of it for keyboard users */
+  .chat-root .chat-input:focus {
+    border-color: var(--color-accent);
+  }
+
+  .chat-root .chat-input:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .chat-root .chat-send {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--radius-control);
+    background-color: var(--color-accent);
+    color: var(--color-accent-ink);
+    transition: background-color 0.15s ease;
+  }
+
+  .chat-root .chat-send:hover {
+    background-color: var(--color-accent-strong);
+  }
+
+  .chat-root .chat-send:active {
+    transform: translateY(1px);
+  }
+
+  /* expansion animation only when motion is welcome, instant under reduce */
+  @media (prefers-reduced-motion: no-preference) {
+    .chat-root .chat-panel:not([hidden]) {
+      animation: chat-panel-in 0.18s ease-out both;
+    }
+  }
+
+  @keyframes chat-panel-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  // set to '/api/chat' once the aliyun bailian proxy is reverse proxied by nginx
+  // (see DEPLOY.md section 4). while it is null the widget answers from the
+  // local faq dictionary only, so the static build needs no backend at all.
+  const CHAT_API_ENDPOINT: string | null = null;
+
+  interface FaqEntry {
+    id: string;
+    keywords: string[];
+    answer: string;
+  }
+
+  interface ChatData {
+    faq: FaqEntry[];
+    fallback: string;
+    youLabel: string;
+    botLabel: string;
+    launcherLabel: string;
+    closeLabel: string;
+  }
+
+  const dataEl = document.getElementById('chat-data');
+  const launcher = document.getElementById('chat-launcher');
+  const panel = document.getElementById('chat-panel');
+  const closeBtn = document.getElementById('chat-close');
+  const log = document.getElementById('chat-log');
+  const form = document.getElementById('chat-form') as HTMLFormElement | null;
+  const input = document.getElementById('chat-input') as HTMLInputElement | null;
+  const chips = document.getElementById('chat-chips');
+
+  if (dataEl && launcher && panel && closeBtn && log && form && input) {
+    const data: ChatData = JSON.parse(dataEl.textContent || '{}');
+
+    const openIcon = launcher.querySelector<HTMLElement>('[data-icon="open"]');
+    const closeIcon = launcher.querySelector<HTMLElement>('[data-icon="close"]');
+
+    // below 640px the panel is a full screen sheet, so the page behind it is locked
+    const isSheet = () => window.matchMedia('(max-width: 639px)').matches;
+
+    const setOpen = (open: boolean) => {
+      panel.hidden = !open;
+      launcher.setAttribute('aria-expanded', String(open));
+      launcher.setAttribute('aria-label', open ? data.closeLabel : data.launcherLabel);
+      if (openIcon) openIcon.hidden = open;
+      if (closeIcon) closeIcon.hidden = !open;
+      document.body.style.overflow = open && isSheet() ? 'hidden' : '';
+
+      if (open) {
+        input.focus();
+        log.scrollTop = log.scrollHeight;
+      } else {
+        launcher.focus();
+      }
+    };
+
+    const append = (text: string, who: 'user' | 'bot') => {
+      const wrap = document.createElement('div');
+      wrap.className = `chat-msg ${who === 'user' ? 'chat-msg-user' : 'chat-msg-bot'}`;
+
+      const label = document.createElement('span');
+      label.className = 'sr-only';
+      label.textContent = who === 'user' ? data.youLabel : data.botLabel;
+
+      const body = document.createElement('p');
+      body.textContent = text;
+
+      wrap.append(label, body);
+      log.append(wrap);
+      log.scrollTop = log.scrollHeight;
+    };
+
+    // keyword intents: sampling / flexibility / curing / thickness /
+    // certification / contact / company. the longest keyword hit wins.
+    const matchFaq = (question: string): string => {
+      const q = question.toLowerCase();
+      let best: FaqEntry | null = null;
+      let bestScore = 0;
+
+      for (const entry of data.faq) {
+        let score = 0;
+        for (const keyword of entry.keywords) {
+          if (keyword && q.includes(keyword.toLowerCase())) score += keyword.length;
+        }
+        if (score > bestScore) {
+          bestScore = score;
+          best = entry;
+        }
+      }
+
+      return best ? best.answer : data.fallback;
+    };
+
+    const reply = async (question: string) => {
+      // local faq branch, the only one active in the shipped static build
+      if (!CHAT_API_ENDPOINT) {
+        append(matchFaq(question), 'bot');
+        return;
+      }
+
+      // backend branch: nginx proxies this to server/chat-proxy.example.mjs,
+      // which talks to bailian and answers with a plain { reply } json object
+      try {
+        const res = await fetch(CHAT_API_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: question }),
+        });
+        if (!res.ok) throw new Error('request failed');
+        const json = (await res.json()) as { reply?: string };
+        append(json.reply?.trim() || matchFaq(question), 'bot');
+      } catch {
+        // network or upstream failure degrades to the built in faq
+        append(matchFaq(question), 'bot');
+      }
+    };
+
+    const send = (text: string) => {
+      const value = text.trim();
+      if (!value) return;
+      append(value, 'user');
+      input.value = '';
+      void reply(value);
+    };
+
+    launcher.addEventListener('click', () => setOpen(panel.hidden));
+    closeBtn.addEventListener('click', () => setOpen(false));
+
+    // enter inside the input submits the form, which is what send() listens to
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      send(input.value);
+    });
+
+    chips?.addEventListener('click', (event) => {
+      const target = (event.target as HTMLElement).closest<HTMLElement>('[data-chip]');
+      if (target?.dataset.chip) send(target.dataset.chip);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !panel.hidden) setOpen(false);
+    });
+  }
+</script>

@@ -1,0 +1,47 @@
+---
+import { Image } from 'astro:assets';
+import Reveal from '../../ui/Reveal.astro';
+import textureDark from '../../../assets/images/texture-dark.jpg';
+import type { Dict, Locale } from '../../../i18n/types';
+
+// spec 6.4 S2: full width text block closed by a narrow decorative banner crop.
+// the banner is ornamental, so its alt stays empty.
+export interface Props {
+  t: Dict;
+  locale: Locale;
+}
+
+const { t, locale } = Astro.props;
+const s = t.applications.aiComputing;
+const headingId = `${s.id}-heading`;
+---
+
+<section
+  id={s.id}
+  class="shell py-16 md:py-24"
+  aria-labelledby={headingId}
+  data-section="applications/AiComputing"
+  data-locale={locale}
+>
+  <Reveal>
+    <span class="block h-px w-10 bg-accent" aria-hidden="true"></span>
+
+    <h2 id={headingId} class="mt-6 text-2xl font-semibold text-text md:text-3xl lg:text-4xl">
+      {s.heading}
+    </h2>
+
+    <p class="mt-6 max-w-[65ch] text-base leading-relaxed text-text-dim md:text-lg">{s.body}</p>
+
+    <div class="mt-10 overflow-hidden rounded-panel border border-line md:mt-12">
+      <Image
+        src={textureDark}
+        alt=""
+        widths={[768, 1152, 1280]}
+        sizes="(min-width: 1264px) 1136px, 100vw"
+        class="h-[120px] w-full object-cover object-center md:h-[180px]"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+  </Reveal>
+</section>
