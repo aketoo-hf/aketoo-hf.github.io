@@ -43,7 +43,42 @@
   --shell-max: 1200px;
   --accent-tint-8: rgba(201, 124, 78, 0.08);
   --top-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  /* sticky header sits on a translucent slab of the page background */
+  --header-bg: rgba(12, 14, 16, 0.85);
+  /* hero backdrop texture, dialled down when the page is light */
+  --hero-texture-opacity: 0.25;
   color-scheme: dark;
+}
+
+/* ==========================================================================
+   light variant, opt-in via <html data-theme="light">
+   only the token values change; every component keeps its semantic classes.
+   every colour below clears WCAG AA on bg, bg-raised and bg-sunken alike
+   ========================================================================== */
+
+[data-theme="light"] {
+  --color-bg: #F7F8F9;
+  --color-bg-raised: #FFFFFF;
+  --color-bg-sunken: #ECEEF0;
+
+  --color-line: rgba(16, 20, 24, 0.10);
+  --color-line-strong: rgba(16, 20, 24, 0.22);
+
+  --color-text: #14181C;
+  --color-text-dim: #4E565E;
+  --color-text-faint: #616970;
+
+  /* copper darkened so it clears AA as text and as a button fill on paper */
+  --color-accent: #A04E27;
+  --color-accent-strong: #82401E;
+  --color-accent-ink: #FFFFFF;
+
+  --accent-tint-8: rgba(160, 78, 39, 0.07);
+  --top-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  --header-bg: rgba(247, 248, 249, 0.85);
+  /* the dark texture would read as grey sludge on paper */
+  --hero-texture-opacity: 0.05;
+  color-scheme: light;
 }
 
 /* ==========================================================================
@@ -251,5 +286,83 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================================
+   print
+   b2b pages get printed into supplier evaluation files, and browsers drop
+   background colours by default, so the dark shell would print as pale grey
+   on white. force a proper paper rendering instead.
+   ========================================================================== */
+
+@media print {
+  /* paper is the surface now, regardless of the on-screen theme */
+  :root,
+  [data-theme="light"] {
+    --color-bg: #FFFFFF;
+    --color-bg-raised: #FFFFFF;
+    --color-bg-sunken: #FFFFFF;
+    --color-line: rgba(0, 0, 0, 0.25);
+    --color-line-strong: rgba(0, 0, 0, 0.45);
+    --color-text: #000000;
+    --color-text-dim: #1F1F1F;
+    --color-text-faint: #3A3A3A;
+    --color-accent: #7A3B1D;
+    --color-accent-strong: #7A3B1D;
+    --color-accent-ink: #FFFFFF;
+    --accent-tint-8: transparent;
+    --top-highlight: none;
+    --header-bg: #FFFFFF;
+    --hero-texture-opacity: 0;
+    color-scheme: light;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  /* chrome and interactive furniture carry nothing on paper */
+  header,
+  .chat-root,
+  .hero-texture,
+  .sr-only-focusable {
+    display: none !important;
+  }
+
+  /* let the reveal animation never leave content invisible on paper */
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  main {
+    padding-top: 0 !important;
+  }
+
+  /* keep headings with their content and never split a spec tile */
+  h1, h2, h3 {
+    break-after: avoid-page;
+  }
+
+  section,
+  figure,
+  img {
+    break-inside: avoid;
+  }
+
+  /* spell out link targets so a printed page stays actionable */
+  a[href^="http"]::after,
+  a[href^="mailto:"]::after,
+  a[href^="tel:"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75em;
+    word-break: break-all;
+  }
+
+  @page {
+    margin: 16mm 14mm;
   }
 }

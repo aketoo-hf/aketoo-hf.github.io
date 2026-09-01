@@ -12,9 +12,13 @@ export interface Props {
   page: PageKey;
   /** organization json-ld is emitted on the home page only */
   organizationJsonLd?: boolean;
+  /** 'light' renders the same markup against the light token set (comparison build) */
+  theme?: 'dark' | 'light';
 }
 
-const { t, locale, page, organizationJsonLd = false } = Astro.props;
+const { t, locale, page, organizationJsonLd = false, theme = 'dark' } = Astro.props;
+
+const themeColor = theme === 'light' ? '#F7F8F9' : '#0C0E10';
 
 const seo = t.seo[page];
 const neutralPath = pagePaths[page];
@@ -49,7 +53,7 @@ const organization = {
 };
 ---
 
-<html lang={t.htmlLang}>
+<html lang={t.htmlLang} data-theme={theme}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -80,8 +84,8 @@ const organization = {
     <meta name="twitter:description" content={seo.description} />
     <meta name="twitter:image" content={ogImage} />
 
-    <meta name="theme-color" content="#0C0E10" />
-    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content={themeColor} />
+    <meta name="color-scheme" content={theme} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
     {
