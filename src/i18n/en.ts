@@ -91,7 +91,6 @@ export const en: Dict = {
     launcherLabel: 'Open live chat',
     panelLabel: 'Hengfeng Technology assistant chat window',
     title: 'Hengfeng assistant',
-    subtitle: 'Demo build. The production version will run on an AI model.',
     welcome:
       'Hello. I can answer questions about our epoxy insulation powders and PVC insulating plastisols, the sampling process, and how to reach us.',
     chips: [

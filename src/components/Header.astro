@@ -2,6 +2,7 @@
 import type { Dict, Locale } from '../i18n/types';
 import { getNavLinks, isCurrentPage, switchLocalePath } from '../i18n';
 import Icon from './ui/Icon.astro';
+import BrandMark from './ui/BrandMark.astro';
 
 export interface Props {
   t: Dict;
@@ -20,22 +21,13 @@ const enHref = switchLocalePath(pathname, 'en');
   style="background:var(--header-bg);"
 >
   <div class="shell flex h-[68px] items-center justify-between gap-6">
-    <!-- brand: a copper powder grain, the latin mark, then the local name -->
+    <!-- brand: the hengfeng mark, the latin name, then the local name -->
     <a
       href={locale === 'zh' ? '/' : '/en/'}
       class="flex shrink-0 items-center gap-3"
       aria-label={t.nav.brandHomeLabel}
     >
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 20 20"
-        class="shrink-0 text-accent"
-        aria-hidden="true"
-        focusable="false"
-      >
-        <rect x="4" y="4" width="12" height="12" transform="rotate(45 10 10)" fill="currentColor" />
-      </svg>
+      <BrandMark size={30} class="shrink-0" />
       <span class="text-[15px] font-semibold tracking-[0.08em] text-text">{t.nav.brandLatin}</span>
       {
         t.nav.brandLocal && (

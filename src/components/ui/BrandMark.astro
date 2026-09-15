@@ -1,0 +1,16 @@
+---
+import markRaw from '../../assets/brand/mark.svg?raw';
+
+// the hengfeng mark, rebuilt from the vector logo file: two real paths (outer
+// ring, body with the knocked-out glyph) under a true linear gradient, 5kb.
+// inlined so it renders crisp at any size with no extra request
+export interface Props {
+  size?: number;
+  class?: string;
+}
+
+const { size = 28, class: cls = '' } = Astro.props;
+const svg = markRaw.replace('<svg ', `<svg width="${size}" height="${size}" class="${cls}" `);
+---
+
+<Fragment set:html={svg} />

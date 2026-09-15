@@ -122,7 +122,6 @@ export interface ChatDict {
   launcherLabel: string;
   panelLabel: string;
   title: string;
-  subtitle: string;
   welcome: string;
   chips: string[];
   faq: ChatFaqEntry[];
