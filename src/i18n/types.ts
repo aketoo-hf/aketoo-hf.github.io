@@ -246,6 +246,8 @@ export interface ProductEntry {
   tag: string;
   heading: string;
   body: string;
+  /** measured parameters, rendered as mono tiles; empty when the line has none */
+  specs: Figure[];
   /** 核心性能 */
   performance: string[];
   /** 核心应用 */

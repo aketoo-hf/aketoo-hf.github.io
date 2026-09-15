@@ -97,8 +97,8 @@ export const en: Dict = {
     chips: [
       'How do I request a sample?',
       'What is the difference between the two lines?',
-      'Which certifications apply?',
-      'Can formulations be customised?',
+      'How flexible is the coating?',
+      'What is the cure schedule?',
     ],
     faq: [
       {
@@ -115,15 +115,27 @@ export const en: Dict = {
       },
       {
         id: 'flexibility',
-        keywords: ['flex', 'bend', 'busbar', 'crack', 'long bar', 'flexible'],
+        keywords: ['flex', 'bend', 'busbar', 'crack', 'long bar', 'flexible', 'angle'],
         answer:
-          'The high-flexibility busbar powder is developed specifically for dip-coating oversized copper and aluminium busbars. It offers high flexibility, resistance to repeated bending, stable dielectric strength and strong high-temperature performance. Our engineering team can confirm exact process parameters for your case.',
+          'The high-flexibility busbar powder reaches a bend angle within 17 degrees. It resists repeated bending and thermal cycling without cracking the coating, and is developed specifically for dip-coating oversized copper and aluminium busbars.',
       },
       {
         id: 'certification',
         keywords: ['certification', 'ul', 'iso', 'iatf', 'automotive', 'standard', 'approval'],
         answer:
           'The epoxy powder line carries the international certification system inherited from Daejoo Electronic Materials: IATF 16949 for automotive, UL 105°C and UL 130°C dual temperature ratings, and the full ISO system.',
+      },
+      {
+        id: 'curing',
+        keywords: ['cure', 'curing', 'bake', 'temperature', 'oven', '180'],
+        answer:
+          'Reference cure for the epoxy powder is 180 degrees Celsius for 20 minutes. The exact schedule can be adjusted for your substrate and coating thickness, and we will support the validation.',
+      },
+      {
+        id: 'thickness',
+        keywords: ['thickness', 'coating', 'film', 'mm', 'thick'],
+        answer:
+          'Coating thickness for the epoxy powder is 0.4-1.0 mm, made to order, at UL94 V-0. Tell us the application and dielectric requirement and we will recommend the formulation and process window.',
       },
       {
         id: 'custom',
@@ -209,7 +221,7 @@ export const en: Dict = {
     products: {
       title: 'Products · Dongguan Hengfeng Technology Co., Ltd.',
       description:
-        'High-flexibility epoxy insulation powder developed for dip-coating oversized copper and aluminium busbars in AI computing centres, and high-performance PVC insulating plastisol with wide temperature tolerance, stable insulation resistance and strong corrosion protection.',
+        'High-flexibility epoxy insulation powder for dip-coating oversized copper and aluminium busbars: bend angle within 17 degrees, coating thickness 0.4-1.0 mm made to order, reference cure 180 degrees Celsius for 20 minutes, UL94 V-0. Plus high-performance PVC insulating plastisol with wide temperature tolerance and strong corrosion protection.',
     },
     applications: {
       title: 'Applications · Dongguan Hengfeng Technology Co., Ltd.',
@@ -407,6 +419,12 @@ export const en: Dict = {
         heading: 'High-flexibility epoxy insulation powder for long busbars',
         body:
           'Built on 45 years of Daejoo powder technology and developed specifically for dip-coating the oversized copper and aluminium busbars used in AI computing centres.',
+        specs: [
+          { value: '≤ 17', unit: '°', label: 'Bend angle' },
+          { value: '0.4-1.0', unit: 'mm', label: 'Coating thickness, made to order' },
+          { value: '180', unit: '°C / 20 min', label: 'Reference cure' },
+          { value: 'V-0', unit: '', label: 'Flammability rating (UL94)' },
+        ],
         performance: [
           'High flexibility',
           'Resists repeated bending',
@@ -430,6 +448,7 @@ export const en: Dict = {
         heading: 'High-performance PVC insulating plastisol',
         body:
           'Wide temperature tolerance, stable insulation and strong corrosion protection, suited to insulation coating of precision metal structures.',
+        specs: [],
         performance: [
           'Wide temperature range',
           'Stable insulation resistance',

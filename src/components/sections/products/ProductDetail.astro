@@ -64,6 +64,22 @@ const eager = !flipped;
 
           <p class="mt-5 max-w-[56ch] text-base leading-relaxed text-text-dim">{product.body}</p>
 
+          {
+            product.specs.length > 0 && (
+              <dl class="mt-8 grid gap-4 sm:grid-cols-2">
+                {product.specs.map((spec) => (
+                  <div class="spec rounded-panel border border-line bg-bg p-5 top-highlight">
+                    <dd class="spec-value num">
+                      {spec.value}
+                      {spec.unit && <span class="spec-unit"> {spec.unit}</span>}
+                    </dd>
+                    <dt class="spec-label">{spec.label}</dt>
+                  </div>
+                ))}
+              </dl>
+            )
+          }
+
           <div class="mt-10 grid gap-x-12 gap-y-8 sm:grid-cols-2">
             <div>
               <h3 class="list-heading">{labels.performanceLabel}</h3>
@@ -124,6 +140,29 @@ const eager = !flipped;
     height: 7px;
     background-color: var(--color-accent);
     transform: rotate(45deg);
+  }
+
+  /* measured parameters lead with the figure, label underneath, so the numbers
+     scan first for an engineer skimming the page */
+  .spec-value {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.1;
+    color: var(--color-text);
+  }
+
+  .spec-unit {
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--color-accent);
+  }
+
+  .spec-label {
+    margin-top: 0.625rem;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--color-text-dim);
   }
 
   .list-heading {

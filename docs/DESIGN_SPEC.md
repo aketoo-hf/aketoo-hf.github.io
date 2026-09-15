@@ -50,7 +50,7 @@
 
 - 全站系统字体栈（中国部署，零外链）：
   - 正文/标题：`"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",system-ui,-apple-system,"Segoe UI",sans-serif`
-  - 数据/参数数字：`ui-monospace,"SF Mono","JetBrains Mono","Cascadia Mono",Menlo,monospace`，并设 `font-variant-numeric: tabular-nums`。所有关键数字（25、45、IATF 16949、105/130℃ 等）一律 mono。
+  - 数据/参数数字：`ui-monospace,"SF Mono","JetBrains Mono","Cascadia Mono",Menlo,monospace`，并设 `font-variant-numeric: tabular-nums`。所有关键数字（25、45、IATF 16949、105/130℃、≤17°、0.4-1.0mm、180℃/20min、V-0 等）一律 mono。
 - 标题：中文标题 font-weight 600，`tracking-normal`（中文不加负字距）；纯拉丁大标题可 `tracking-tight`。
 - h1 尺寸克制：`text-4xl md:text-5xl lg:text-6xl` 上限。正文 `text-base leading-relaxed max-w-[65ch]`。
 - 小型字母间距标签（eyebrow，如 `HENGFENG TECHNOLOGY · SINCE 2001`）全站严格配额：**每 3 个 section 至多 1 个**，单页至多 3 个。
@@ -98,6 +98,8 @@
 | `/` | Hero, Stats, Domains(bento 1+4), Lineup(2 产品), Customers, Endorsement, CtaBand | `home.*` |
 | `/about/` | 页头, Story(3 段), Strengths(6 点), DualAdvantage(25+45), CtaBand | `about.*` |
 | `/products/` | 页头, ProductDetail x2（环氧粉末 / PVC 浸塑溶胶，第二个镜像翻转）, Process, CtaBand | `products.*` |
+
+环氧粉末线带 4 项实测参数（`specs`，mono 瓦片，正文之后、性能清单之前）：折弯角度 ≤17°、涂层厚度 0.4-1.0 mm、固化 180℃/20min、阻燃 V-0（UL94）。参数沿用大州事业部原产线数据，已由公司确认仍适用。PVC 线 `specs` 为空数组，不渲染瓦片。
 | `/applications/` | 页头, DomainSection x5（布局按 banner / split-left / stack / split-right / banner 轮换）, CtaBand | `applications.items` |
 | `/quality/` | 页头, Framework(5 点), LabMatrix, Systems, CtaBand | `quality.*` |
 | `/contact/` | 页头, ContactInfo(双地址) + InquiryForm, CtaBand | `contact.*` |
