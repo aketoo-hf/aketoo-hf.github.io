@@ -2,9 +2,8 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SectionHeading from '../../components/ui/SectionHeading.astro';
 import Story from '../../components/sections/about/Story.astro';
-import Timeline from '../../components/sections/about/Timeline.astro';
-import Facility from '../../components/sections/about/Facility.astro';
-import Footprint from '../../components/sections/about/Footprint.astro';
+import Strengths from '../../components/sections/about/Strengths.astro';
+import DualAdvantage from '../../components/sections/about/DualAdvantage.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import { getDict } from '../../i18n';
 import type { Locale } from '../../i18n/types';
@@ -20,9 +19,8 @@ const t = getDict(locale);
   </section>
 
   <Story t={t} locale={locale} />
-  <Timeline t={t} locale={locale} />
-  <Facility t={t} locale={locale} />
-  <Footprint t={t} locale={locale} />
+  <Strengths t={t} locale={locale} />
+  <DualAdvantage t={t} locale={locale} />
 
   <CtaBand t={t} locale={locale} />
 </BaseLayout>

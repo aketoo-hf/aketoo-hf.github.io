@@ -1,4 +1,4 @@
-# 阿克图官网部署说明
+# 亨丰科技官网部署说明
 
 站点：https://www.aketoo.com
 技术栈：Astro 5（static）+ Tailwind CSS v4，产物为纯静态文件，无需 Node 运行时（AI 客服与询盘接口除外）。

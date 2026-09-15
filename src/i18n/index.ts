@@ -62,7 +62,13 @@ export function localizePath(path: string, locale: Locale): string {
 
 /** the same page in the other locale, used by the language switch */
 export function switchLocalePath(pathname: string, target: Locale): string {
-  return localizePath(stripLocale(pathname), target);
+  const neutral = stripLocale(pathname);
+  // routes outside the six translated pages (the theme comparison build, say)
+  // have no counterpart, so the switcher falls back to that locale's home
+  const known = Object.values(pagePaths).some(
+    (p) => p === neutral || `${p}/` === neutral || p === `${neutral}/`,
+  );
+  return localizePath(known ? neutral : '/', target);
 }
 
 /** localized href for a known page */

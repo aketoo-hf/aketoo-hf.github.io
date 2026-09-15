@@ -3,7 +3,7 @@ import { Image } from 'astro:assets';
 import type { Dict, Locale } from '../../../i18n/types';
 import Icon from '../../ui/Icon.astro';
 import Reveal from '../../ui/Reveal.astro';
-import busbarCoated from '../../../assets/images/busbar-coated.jpg';
+import busbarEpoxy from '../../../assets/images/busbar-epoxy-green.jpg';
 
 // s3 application domains, bento: one tall photo cell plus three raised cells.
 // each cell is a single link target that jumps to its anchor on /applications/.
@@ -30,7 +30,7 @@ const s = t.home.domains;
     <div class="bento mt-10 grid gap-4 md:mt-12">
       <a class="cell cell-feature group relative overflow-hidden rounded-panel" href={s.feature.href}>
         <Image
-          src={busbarCoated}
+          src={busbarEpoxy}
           alt={s.feature.imageAlt}
           widths={[480, 720, 1024]}
           sizes="(min-width: 1024px) 58vw, 100vw"
@@ -61,7 +61,7 @@ const s = t.home.domains;
           <a
             class:list={[
               'cell group relative flex flex-col justify-between overflow-hidden rounded-panel border border-line p-6 transition-colors duration-200 hover:border-line-strong md:p-8',
-              i === 2 ? 'cell-wide cell-tinted' : 'bg-bg-raised',
+              i === 3 ? 'cell-tinted' : 'bg-bg-raised',
             ]}
             href={item.href}
           >
@@ -125,8 +125,7 @@ const s = t.home.domains;
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .cell-feature,
-    .cell-wide {
+    .cell-feature {
       grid-column: span 2;
     }
 
@@ -146,24 +145,16 @@ const s = t.home.domains;
       min-height: 24rem;
     }
 
+    /* the two cells beside the feature take the remaining 5 columns, the last
+       two share a full row underneath, so five areas fill the grid exactly */
     .cell-feature + .cell,
     .cell-feature + .cell + .cell {
       grid-column: span 5;
     }
 
-    .cell-wide {
-      grid-column: span 12;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-      gap: 2.5rem;
-      min-height: 8.5rem;
-    }
-
-    .cell-wide > :last-child {
-      margin-top: 0;
-      max-width: 46ch;
-      text-align: right;
+    .cell-feature ~ .cell:nth-of-type(4),
+    .cell-feature ~ .cell:nth-of-type(5) {
+      grid-column: span 6;
     }
   }
 </style>

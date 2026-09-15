@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SectionHeading from '../../components/ui/SectionHeading.astro';
-import Investment from '../../components/sections/quality/Investment.astro';
+import Framework from '../../components/sections/quality/Framework.astro';
 import LabMatrix from '../../components/sections/quality/LabMatrix.astro';
 import Systems from '../../components/sections/quality/Systems.astro';
 import CtaBand from '../../components/CtaBand.astro';
@@ -18,7 +18,7 @@ const t = getDict(locale);
     <SectionHeading level={1} title={t.quality.header.title} lead={t.quality.header.lead} />
   </section>
 
-  <Investment t={t} locale={locale} />
+  <Framework t={t} locale={locale} />
   <LabMatrix t={t} locale={locale} />
   <Systems t={t} locale={locale} />
 

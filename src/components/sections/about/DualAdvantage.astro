@@ -1,0 +1,90 @@
+---
+import type { Dict, Locale } from '../../../i18n/types';
+import Reveal from '../../ui/Reveal.astro';
+
+// the company's positioning stated as one equation: local years plus global
+// years. two oversized mono figures either side of a copper plus sign.
+export interface Props {
+  t: Dict;
+  locale: Locale;
+}
+
+const { t, locale } = Astro.props;
+const s = t.about.dualAdvantage;
+const figures = [s.local, s.global];
+---
+
+<section
+  data-section="about/DualAdvantage"
+  data-locale={locale}
+  aria-labelledby="about-dual-heading"
+>
+  <div class="shell py-16 md:py-20 lg:py-24">
+    <Reveal>
+      <h2 id="about-dual-heading" class="text-2xl font-semibold text-text md:text-3xl">
+        {s.heading}
+      </h2>
+
+      <div class="dual mt-10 md:mt-14">
+        <div class="dual-item">
+          <p class="num dual-value">
+            {figures[0].value}<span class="dual-unit">{figures[0].unit}</span>
+          </p>
+          <p class="mt-3 max-w-[24ch] text-sm leading-relaxed text-text-dim">{figures[0].label}</p>
+        </div>
+
+        <span class="dual-plus num" aria-hidden="true">+</span>
+
+        <div class="dual-item">
+          <p class="num dual-value">
+            {figures[1].value}<span class="dual-unit">{figures[1].unit}</span>
+          </p>
+          <p class="mt-3 max-w-[24ch] text-sm leading-relaxed text-text-dim">{figures[1].label}</p>
+        </div>
+      </div>
+
+      <p class="mt-12 max-w-[60ch] border-t border-line pt-8 text-base leading-relaxed text-text-dim">
+        {s.statement}
+      </p>
+    </Reveal>
+  </div>
+</section>
+
+<style>
+  .dual {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .dual-value {
+    font-size: 3.5rem;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--color-text);
+  }
+
+  .dual-unit {
+    margin-left: 0.4rem;
+    font-size: 1.125rem;
+    font-weight: 400;
+    color: var(--color-accent);
+  }
+
+  .dual-plus {
+    font-size: 2rem;
+    line-height: 1;
+    color: var(--color-accent);
+  }
+
+  @media (min-width: 768px) {
+    .dual {
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 3rem;
+    }
+
+    .dual-value {
+      font-size: 4.5rem;
+    }
+  }
+</style>

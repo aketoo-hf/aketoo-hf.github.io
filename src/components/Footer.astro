@@ -57,10 +57,17 @@ const c = t.common.contact;
               {c.email}
             </a>
           </li>
-          <li class="flex items-start gap-3">
-            <Icon name="map-pin" size={18} class="mt-0.5 shrink-0 text-text-faint" />
-            <span class="max-w-[36ch] text-sm leading-relaxed text-text-dim">{c.address}</span>
-          </li>
+          {
+            c.addresses.map((addr) => (
+              <li class="flex items-start gap-3">
+                <Icon name="map-pin" size={18} class="mt-0.5 shrink-0 text-text-faint" />
+                <span class="max-w-[36ch] text-sm leading-relaxed text-text-dim">
+                  <span class="block text-text-faint">{addr.label}</span>
+                  {addr.value}
+                </span>
+              </li>
+            ))
+          }
         </ul>
       </div>
     </div>

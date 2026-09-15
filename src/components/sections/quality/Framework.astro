@@ -1,0 +1,76 @@
+---
+import type { Dict, Locale } from '../../../i18n/types';
+import Reveal from '../../ui/Reveal.astro';
+import SectionHeading from '../../ui/SectionHeading.astro';
+
+// the five pillars of the inherited quality system, as hairline-separated rows
+// rather than cards: the copy is the substance here, not the container.
+export interface Props {
+  t: Dict;
+  locale: Locale;
+}
+
+const { t, locale } = Astro.props;
+const s = t.quality.framework;
+---
+
+<section class="shell py-16 md:py-24" data-section="quality/Framework" data-locale={locale}>
+  <Reveal>
+    <SectionHeading title={s.heading} />
+
+    <div class="pillars mt-10 md:mt-12">
+      {
+        s.items.map((item) => (
+          <div class="pillar">
+            <h3 class="pillar-title">{item.title}</h3>
+            <p class="pillar-body">{item.body}</p>
+          </div>
+        ))
+      }
+    </div>
+  </Reveal>
+</section>
+
+<style>
+  .pillars {
+    display: grid;
+    gap: 0;
+  }
+
+  .pillar {
+    display: grid;
+    gap: 0.5rem;
+    padding-block: 1.5rem;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .pillar:last-child {
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .pillar-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .pillar-body {
+    max-width: 62ch;
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--color-text-dim);
+  }
+
+  @media (min-width: 768px) {
+    .pillar {
+      grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+      align-items: baseline;
+      gap: 2.5rem;
+      padding-block: 1.75rem;
+    }
+
+    .pillar-title {
+      font-size: 1.0625rem;
+    }
+  }
+</style>

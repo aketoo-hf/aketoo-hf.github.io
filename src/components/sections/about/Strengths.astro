@@ -1,0 +1,54 @@
+---
+import type { Dict, Locale } from '../../../i18n/types';
+import Reveal from '../../ui/Reveal.astro';
+
+// the six hard-capability points. a plain three-column grid separated by
+// hairlines rather than cards, so the page keeps its editorial weight.
+export interface Props {
+  t: Dict;
+  locale: Locale;
+}
+
+const { t, locale } = Astro.props;
+const s = t.about.strengths;
+---
+
+<section
+  class="border-t border-line bg-bg-raised"
+  data-section="about/Strengths"
+  data-locale={locale}
+  aria-labelledby="about-strengths-heading"
+>
+  <div class="shell py-16 md:py-20 lg:py-24">
+    <Reveal>
+      <h2
+        id="about-strengths-heading"
+        class="text-2xl font-semibold text-text md:text-3xl"
+      >
+        {s.heading}
+      </h2>
+
+      <div class="mt-10 grid gap-x-12 gap-y-10 md:mt-14 md:grid-cols-2 lg:grid-cols-3 lg:gap-x-16">
+        {
+          s.items.map((item) => (
+            <div class="strength">
+              <span class="tick" aria-hidden="true"></span>
+              <h3 class="mt-5 text-base font-semibold text-text md:text-lg">{item.title}</h3>
+              <p class="mt-3 max-w-[38ch] text-sm leading-relaxed text-text-dim">{item.body}</p>
+            </div>
+          ))
+        }
+      </div>
+    </Reveal>
+  </div>
+</section>
+
+<style>
+  /* a short copper rule stands in for a card border */
+  .tick {
+    display: block;
+    width: 40px;
+    height: 1px;
+    background-color: var(--color-accent);
+  }
+</style>

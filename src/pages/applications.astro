@@ -1,10 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/ui/SectionHeading.astro';
-import AiComputing from '../components/sections/applications/AiComputing.astro';
-import Busbar from '../components/sections/applications/Busbar.astro';
-import Passive from '../components/sections/applications/Passive.astro';
-import Automotive from '../components/sections/applications/Automotive.astro';
+import DomainSection from '../components/sections/applications/DomainSection.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { getDict } from '../i18n';
 import type { Locale } from '../i18n/types';
@@ -12,6 +9,10 @@ import type { Locale } from '../i18n/types';
 // thin page shell: pick the dictionary, then stack the section components in spec order
 const locale: Locale = 'zh';
 const t = getDict(locale);
+
+// layout and imagery vary by position so no two neighbouring areas match (spec 4.7)
+const LAYOUTS = ['banner', 'split-left', 'stack', 'split-right', 'banner'] as const;
+const IMAGES = ['none', 'epoxy', 'none', 'pvc', 'none'] as const;
 ---
 
 <BaseLayout t={t} locale={locale} page="applications">
@@ -19,10 +20,17 @@ const t = getDict(locale);
     <SectionHeading level={1} title={t.applications.header.title} lead={t.applications.header.lead} />
   </section>
 
-  <AiComputing t={t} locale={locale} />
-  <Busbar t={t} locale={locale} />
-  <Passive t={t} locale={locale} />
-  <Automotive t={t} locale={locale} />
+  {
+    t.applications.items.map((entry, i) => (
+      <DomainSection
+        entry={entry}
+        locale={locale}
+        layout={LAYOUTS[i]}
+        image={IMAGES[i]}
+        raised={i % 2 === 1}
+      />
+    ))
+  }
 
   <CtaBand t={t} locale={locale} />
 </BaseLayout>

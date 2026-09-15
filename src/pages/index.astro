@@ -3,7 +3,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/sections/home/Hero.astro';
 import Stats from '../components/sections/home/Stats.astro';
 import Domains from '../components/sections/home/Domains.astro';
-import Flagship from '../components/sections/home/Flagship.astro';
+import Lineup from '../components/sections/home/Lineup.astro';
+import Customers from '../components/sections/home/Customers.astro';
 import Endorsement from '../components/sections/home/Endorsement.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { getDict } from '../i18n';
@@ -18,7 +19,8 @@ const t = getDict(locale);
   <Hero t={t} locale={locale} />
   <Stats t={t} locale={locale} />
   <Domains t={t} locale={locale} />
-  <Flagship t={t} locale={locale} />
+  <Lineup t={t} locale={locale} />
+  <Customers t={t} locale={locale} />
   <Endorsement t={t} locale={locale} />
 
   <CtaBand t={t} locale={locale} />

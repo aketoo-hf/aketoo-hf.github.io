@@ -1,6 +1,6 @@
-# AKETOO 官网
+# HENGFENG 官网
 
-阿克图（东莞）电子绝缘材料有限公司官方网站源码。
+东莞亨丰科技有限公司官方网站源码。
 唯一设计与内容依据：[`docs/DESIGN_SPEC.md`](docs/DESIGN_SPEC.md)。冲突时以规格书为准。
 
 ## 技术栈

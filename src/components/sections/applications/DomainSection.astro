@@ -1,0 +1,141 @@
+---
+import { Image } from 'astro:assets';
+import type { ApplicationEntry, Locale } from '../../../i18n/types';
+import Reveal from '../../ui/Reveal.astro';
+import busbarEpoxy from '../../../assets/images/busbar-epoxy-green.jpg';
+import busbarPvc from '../../../assets/images/busbar-pvc-blue.jpg';
+import textureDark from '../../../assets/images/texture-dark.jpg';
+
+// one application area. the page passes a different layout per index so no
+// two neighbouring sections share a composition (spec 4.7).
+export type DomainLayout = 'banner' | 'split-left' | 'stack' | 'split-right';
+
+export interface Props {
+  entry: ApplicationEntry;
+  locale: Locale;
+  layout: DomainLayout;
+  /** which product photo illustrates this area, if any */
+  image?: 'epoxy' | 'pvc' | 'none';
+  /** raised surfaces alternate so the page reads as bands, not a list */
+  raised?: boolean;
+}
+
+const { entry, locale, layout, image = 'none', raised = false } = Astro.props;
+const photo = image === 'epoxy' ? busbarEpoxy : image === 'pvc' ? busbarPvc : null;
+const headingId = `app-${entry.id}-heading`;
+---
+
+<section
+  id={entry.id}
+  class:list={['border-t border-line', raised && 'bg-bg-raised']}
+  data-section={`applications/${entry.id}`}
+  data-locale={locale}
+  aria-labelledby={headingId}
+>
+  <div class="shell py-16 md:py-20 lg:py-24">
+    <Reveal>
+      {
+        layout === 'banner' && (
+          <div>
+            <span class="tick" aria-hidden="true" />
+            <h2 id={headingId} class="mt-6 text-2xl font-semibold text-text md:text-3xl lg:text-4xl">
+              {entry.heading}
+            </h2>
+            <p class="mt-5 max-w-[62ch] text-base leading-relaxed text-text-dim">{entry.body}</p>
+            <div class="banner mt-10 overflow-hidden rounded-panel border border-line md:mt-12">
+              <Image
+                src={textureDark}
+                alt=""
+                widths={[768, 1280]}
+                sizes="100vw"
+                loading="lazy"
+                decoding="async"
+                class="h-full w-full object-cover"
+              />
+            </div>
+          </div>
+        )
+      }
+
+      {
+        (layout === 'split-left' || layout === 'split-right') && (
+          <div
+            class:list={[
+              'grid items-center gap-10 md:gap-12 lg:grid-cols-2 lg:gap-16',
+              layout === 'split-right' && 'lg:[&>*:first-child]:order-2',
+            ]}
+          >
+            <div class="media overflow-hidden rounded-panel border border-line">
+              {photo && (
+                <Image
+                  src={photo}
+                  alt={entry.imageAlt}
+                  widths={[480, 720]}
+                  sizes="(min-width: 1024px) 46vw, 100vw"
+                  loading="lazy"
+                  decoding="async"
+                  class="h-full w-full object-cover"
+                />
+              )}
+            </div>
+
+            <div>
+              <span class="tick" aria-hidden="true" />
+              <h2 id={headingId} class="mt-6 text-2xl font-semibold text-text md:text-3xl">
+                {entry.heading}
+              </h2>
+              <p class="mt-5 max-w-[52ch] text-base leading-relaxed text-text-dim">{entry.body}</p>
+              {entry.note && (
+                <p class="note mt-6 max-w-[52ch] text-sm leading-relaxed text-text-dim">
+                  {entry.note}
+                </p>
+              )}
+            </div>
+          </div>
+        )
+      }
+
+      {
+        layout === 'stack' && (
+          <div class="mx-auto max-w-[70ch] text-center">
+            <h2 id={headingId} class="text-2xl font-semibold text-text md:text-3xl">
+              {entry.heading}
+            </h2>
+            <p class="mx-auto mt-5 max-w-[58ch] text-base leading-relaxed text-text-dim">
+              {entry.body}
+            </p>
+          </div>
+        )
+      }
+    </Reveal>
+  </div>
+</section>
+
+<style>
+  .tick {
+    display: block;
+    width: 40px;
+    height: 1px;
+    background-color: var(--color-accent);
+  }
+
+  .banner {
+    height: 120px;
+  }
+
+  .media {
+    aspect-ratio: 5 / 4;
+  }
+
+  /* a quiet copper rule marks the supporting line as secondary */
+  .note {
+    border-left: 2px solid var(--color-accent);
+    padding-left: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .banner {
+      height: 180px;
+    }
+  }
+</style>

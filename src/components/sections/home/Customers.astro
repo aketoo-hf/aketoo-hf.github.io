@@ -1,0 +1,76 @@
+---
+import type { Dict, Locale } from '../../../i18n/types';
+import Reveal from '../../ui/Reveal.astro';
+
+// customer names as plain text on a hairline grid, never as third-party logos:
+// reproducing customer trademarks would need each of their permissions.
+export interface Props {
+  t: Dict;
+  locale: Locale;
+}
+
+const { t, locale } = Astro.props;
+const s = t.home.customers;
+---
+
+<section
+  class="bg-bg-raised"
+  data-section="home/Customers"
+  data-locale={locale}
+  aria-labelledby="home-customers-heading"
+>
+  <div class="shell py-16 md:py-20 lg:py-24">
+    <Reveal>
+      <h2 id="home-customers-heading" class="text-2xl font-semibold text-text md:text-3xl">
+        {s.heading}
+      </h2>
+      <p class="mt-4 max-w-[56ch] text-base leading-relaxed text-text-dim">{s.lead}</p>
+
+      <ul class="names mt-10 md:mt-12">
+        {s.names.map((name) => <li class="name">{name}</li>)}
+      </ul>
+
+      <p class="mt-8 text-sm text-text-faint">{s.note}</p>
+    </Reveal>
+  </div>
+</section>
+
+<style>
+  .names {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    background-color: var(--color-line);
+    border: 1px solid var(--color-line);
+  }
+
+  .name {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 64px;
+    padding: 0.75rem 1rem;
+    text-align: center;
+    font-size: 0.9375rem;
+    color: var(--color-text);
+    background-color: var(--color-bg-raised);
+    transition: color 0.15s ease;
+  }
+
+  @media (min-width: 640px) {
+    .names {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .names {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+
+    .name {
+      min-height: 72px;
+      font-size: 0.875rem;
+    }
+  }
+</style>

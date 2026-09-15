@@ -1,4 +1,4 @@
-// complete dictionary contract for the AKETOO site
+// complete dictionary contract for the HENGFENG site
 // every visible string on the site must originate from one of these fields
 
 export type Locale = 'zh' | 'en';
@@ -18,7 +18,7 @@ export interface Figure {
   label: string;
 }
 
-/** title + body pair used by feature groups, timeline rows, process steps */
+/** title + body pair used by capability points, process steps, product cards */
 export interface TitledText {
   title: string;
   body: string;
@@ -32,6 +32,12 @@ export interface ListGroup {
 export interface SeoEntry {
   title: string;
   description: string;
+}
+
+/** one of the company's two sites (office / r&d base and the plant) */
+export interface AddressEntry {
+  label: string;
+  value: string;
 }
 
 export interface NavDict {
@@ -97,7 +103,8 @@ export interface CommonDict {
     email: string;
     emailHref: string;
     emailLabel: string;
-    address: string;
+    /** two sites: the owned office / r&d base and the acquired plant */
+    addresses: AddressEntry[];
     addressLabel: string;
   };
   /** spec 8.4 footnote, at most one per page */
@@ -185,15 +192,21 @@ export interface HomeDict {
       href: string;
       imageAlt: string;
     };
+    /** four secondary cells, so the bento holds exactly five application areas */
     items: Array<{ title: string; body: string; href: string }>;
   };
-  flagship: {
+  /** the two product lines, previewed side by side */
+  lineup: {
     heading: string;
-    specs: Figure[];
-    summary: string;
+    items: Array<{ title: string; body: string; highlights: string[]; imageAlt: string }>;
     linkLabel: string;
     linkHref: string;
-    imageAlt: string;
+  };
+  customers: {
+    heading: string;
+    lead: string;
+    names: string[];
+    note: string;
   };
   endorsement: {
     heading: string;
@@ -214,19 +227,34 @@ export interface AboutDict {
     heading: string;
     paragraphs: string[];
   };
-  timeline: {
-    heading: string;
-    items: Array<{ year: string; event: string }>;
-  };
-  facility: {
-    heading: string;
-    items: Figure[];
-    footnote: string;
-  };
-  footprint: {
+  /** the six hard-capability points */
+  strengths: {
     heading: string;
     items: TitledText[];
   };
+  /** local depth plus acquired global technology, stated as one equation */
+  dualAdvantage: {
+    heading: string;
+    local: Figure;
+    global: Figure;
+    statement: string;
+  };
+}
+
+export interface ProductEntry {
+  id: string;
+  tag: string;
+  heading: string;
+  body: string;
+  /** 核心性能 */
+  performance: string[];
+  /** 核心应用 */
+  applications: string[];
+  /** 配套服务 */
+  service: string;
+  /** optional certification line, only the epoxy line carries one */
+  certifications: string;
+  imageAlt: string;
 }
 
 export interface ProductsDict {
@@ -234,17 +262,11 @@ export interface ProductsDict {
     title: string;
     lead: string;
   };
-  flagship: {
-    tag: string;
-    heading: string;
-    body: string;
-    specs: Figure[];
-    imageAlt: string;
-  };
-  features: {
-    heading: string;
-    groups: ListGroup[];
-  };
+  /** exactly two entries: epoxy powder, then pvc plastisol */
+  lineup: ProductEntry[];
+  performanceLabel: string;
+  applicationsLabel: string;
+  serviceLabel: string;
   process: {
     heading: string;
     steps: TitledText[];
@@ -256,7 +278,6 @@ export interface ApplicationEntry {
   heading: string;
   body: string;
   note: string;
-  anchorYear: string;
   imageAlt: string;
 }
 
@@ -265,10 +286,8 @@ export interface ApplicationsDict {
     title: string;
     lead: string;
   };
-  aiComputing: ApplicationEntry;
-  busbar: ApplicationEntry;
-  passive: ApplicationEntry;
-  automotive: ApplicationEntry;
+  /** five strategic industries, rendered with alternating layouts by index */
+  items: ApplicationEntry[];
 }
 
 export interface QualityDict {
@@ -276,14 +295,16 @@ export interface QualityDict {
     title: string;
     lead: string;
   };
-  investment: {
+  /** the five pillars of the inherited quality system */
+  framework: {
     heading: string;
-    items: Figure[];
-    footnote: string;
+    items: TitledText[];
   };
   labMatrix: {
     heading: string;
+    lead: string;
     groups: ListGroup[];
+    footnote: string;
   };
   systems: {
     heading: string;

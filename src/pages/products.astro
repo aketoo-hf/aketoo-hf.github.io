@@ -1,8 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/ui/SectionHeading.astro';
-import FlagshipDetail from '../components/sections/products/FlagshipDetail.astro';
-import Features from '../components/sections/products/Features.astro';
+import ProductDetail from '../components/sections/products/ProductDetail.astro';
 import Process from '../components/sections/products/Process.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { getDict } from '../i18n';
@@ -18,8 +17,18 @@ const t = getDict(locale);
     <SectionHeading level={1} title={t.products.header.title} lead={t.products.header.lead} />
   </section>
 
-  <FlagshipDetail t={t} locale={locale} />
-  <Features t={t} locale={locale} />
+  {
+    t.products.lineup.map((product, i) => (
+      <ProductDetail
+        t={t}
+        locale={locale}
+        product={product}
+        flipped={i % 2 === 1}
+        raised={i % 2 === 1}
+      />
+    ))
+  }
+
   <Process t={t} locale={locale} />
 
   <CtaBand t={t} locale={locale} />

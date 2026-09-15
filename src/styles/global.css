@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ==========================================================================
-   AKETOO design tokens (spec section 2 / 3)
+   HENGFENG design tokens (spec section 2 / 3)
    dark-locked, copper is the only accent, no theme inversion anywhere
    ========================================================================== */
 
@@ -18,7 +18,9 @@
   /* text */
   --color-text: #F3F2EF;
   --color-text-dim: #A6ACB2;
-  --color-text-faint: #6E757C;
+  /* carries real labels (addresses, service lines), not only footnotes,
+     so it must clear AA on every surface: 5.08:1 at worst, on bg-raised */
+  --color-text-faint: #828990;
 
   /* copper, the single accent */
   --color-accent: #C97C4E;
@@ -145,8 +147,8 @@
     color: inherit;
   }
 
-  /* text-dim, not text-faint: placeholders are real text and must clear AA
-     (text-faint is 4.1:1 on the dark surfaces, below the 4.5:1 threshold) */
+  /* placeholders are real text and sit on the page surface, so they use
+     text-dim rather than the quieter text-faint */
   input::placeholder,
   textarea::placeholder {
     color: var(--color-text-dim);

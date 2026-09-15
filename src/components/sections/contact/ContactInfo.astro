@@ -27,7 +27,13 @@ interface Row {
 const rows: Row[] = [
   { icon: 'phone', label: c.phoneLabel, value: c.phone, href: c.phoneHref, mono: true },
   { icon: 'mail', label: c.emailLabel, value: c.email, href: c.emailHref, mono: true },
-  { icon: 'map-pin', label: c.addressLabel, value: c.address, mono: false },
+  // the company runs two sites, each labelled with its own role
+  ...c.addresses.map((addr) => ({
+    icon: 'map-pin' as const,
+    label: addr.label,
+    value: addr.value,
+    mono: false,
+  })),
 ];
 ---
 
